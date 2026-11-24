@@ -213,7 +213,9 @@ rsvg-convert -w 2200 layers/site.svg -o /tmp/verify_site.png
 rsvg-convert -w 2200 layers/first.svg -o /tmp/verify_first.png
 ```
 
-#### 3. Commit and Publish to GitHub Pages
+#### 3. Bump Asset Cache-Buster & Publish to GitHub Pages
+Before committing, increment the `?v=<N>` version query string on `styles.css`, `layers/plan-data.js`, `layers/elec-inventory.js`, and `app.js` in `index.html` so browsers immediately load the updated CSS/JS instead of serving cached subresources:
+
 ```bash
 git status
 git add index.html styles.css app.js layers/ scripts/ README.md PDF-UPDATE-GUIDE.md
