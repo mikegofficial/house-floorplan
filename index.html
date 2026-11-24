@@ -115,10 +115,19 @@
                 </svg>
               </button>
               <div id="elec-legend-drawer" class="elec-legend-drawer">
+                <div class="elec-id-search-wrap">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input id="elec-id-search" type="search" placeholder="Jump to ID (e.g. KIT-3W1, PRM-O2)..." />
+                  <div id="elec-id-results" class="elec-id-results"></div>
+                </div>
                 <div class="elec-legend-toolbar">
                   <span id="elec-legend-floor-tag" class="elec-legend-floor-tag">1st Floor · E1.0</span>
                   <div class="elec-legend-actions">
-                    <button id="btn-elec-all" class="elec-mini-link" type="button">Highlight All</button>
+                    <button id="btn-elec-ids" class="elec-mini-link active" type="button" title="Show/Hide ID Labels on Highlighted Symbols">IDs</button>
+                    <button id="btn-elec-all" class="elec-mini-link" type="button">All</button>
                     <button id="btn-elec-clear" class="elec-mini-link" type="button">Clear</button>
                   </div>
                 </div>
@@ -337,10 +346,12 @@
         <div id="elec-tooltip" class="elec-tooltip" role="tooltip">
           <div class="elec-tooltip-head">
             <span id="elec-tooltip-dot" class="elec-tooltip-dot"></span>
+            <span id="elec-tooltip-id" class="elec-tooltip-id"></span>
             <span id="elec-tooltip-title"></span>
           </div>
           <div id="elec-tooltip-note" class="elec-tooltip-note"></div>
           <div id="elec-tooltip-room" class="elec-tooltip-room"></div>
+          <div id="elec-tooltip-hint" class="elec-tooltip-hint">Click symbol to copy ID</div>
         </div>
 
         <!-- Active Room Inspector Card -->
@@ -369,6 +380,13 @@
             </div>
             <div id="room-elec-chips" class="room-elec-chips"></div>
             <ul id="room-elec-notes" class="room-elec-notes"></ul>
+            <button id="btn-room-ids-toggle" class="room-ids-toggle" type="button" aria-expanded="false">
+              <span id="room-ids-toggle-label">Device IDs</span>
+              <svg class="elec-expand-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div id="room-ids-list" class="room-ids-list"></div>
             <button id="btn-room-elec-spotlight" class="room-elec-spotlight-btn" type="button">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
               <span id="btn-room-elec-label">Spotlight Room Electrical</span>

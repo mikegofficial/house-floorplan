@@ -37,3 +37,17 @@ npx serve .
 | Toggle Adjacent Floor Ghost Overlay (`1st` ↔ `2nd`) | `G` |
 | Toggle Interactive Room Footprints | `R` |
 | Toggle Inspector Sidebar | `B` |
+
+## Interactive Electrical Overlay & Device ID System
+
+Expand **Electrical Legend & Notes** in the Layers sidebar (or press `E`) to toggle individual electrical symbol categories on both floors, read interactive General Electrical Notes, or jump directly to any device by ID.
+
+Every outlet, switch, light fixture, and specialty device is assigned a deterministic human-friendly ID formatted as **`<ROOM>-<CODE><NUM>`** (sorted top-to-bottom in 1-foot rows, then left-to-right):
+
+- **Examples:** `KIT-O1` (Kitchen 110V Outlet #1), `KIT-3W1` (Kitchen 3-Way Smart Switch #1), `AD-BED-SW1` (ADU Bedroom Smart Switch #1), `B3-SC1` (Bath 3 Vanity Sconce #1), `EXT-WP1` (Exterior Waterproof Outlet #1)
+- **Locate & Share:** Search any ID in the Electrical Legend search box to zoom straight to it, hover any symbol to inspect its ID and callout, click any symbol to copy its ID to your clipboard, or expand **Device IDs** inside any Room Inspector Card.
+
+## Updating from a Revised Architectural PDF
+
+See **[`PDF-UPDATE-GUIDE.md`](PDF-UPDATE-GUIDE.md)** for the full step-by-step system instructions, CLI commands (`scripts/extract_floorplan.py` and `scripts/extract_electrical.py`), privacy-scrubbing checklist, and a ready-to-paste AI agent prompt for processing future architect revisions.
+

@@ -347,10 +347,14 @@
     // Interactive Electrical Legend & Spotlight state
     elecDrawerOpen: false,
     elecNotesOpen: false,
+    elecShowIds: true,
     elecSelectedTypes: new Set(), // empty = clean CAD default
     elecHoverType: null,
+    elecHoverId: null,
+    elecFocusId: null,
     elecRoomSpotlightId: null,
     elecActiveNoteIdx: null,
+    roomIdsOpen: false,
     vb: { x: 65, y: 205, w: 2335, h: 1105 },
     activeRoomId: null,
     schedTab: "doors",
@@ -633,6 +637,7 @@
       if (room && room.floor !== nextFloor) closeRoomCard();
     }
     state.elecRoomSpotlightId = null;
+    state.elecFocusId = null;
     syncLayers();
     // Keep camera position if switching between aligned 1st<->elec1 or 2nd<->elec2!
     const alignedPair =
@@ -688,6 +693,7 @@
   function toggleElecType(typeKey) {
     ensureElecActive();
     state.elecRoomSpotlightId = null;
+    state.elecFocusId = null;
     state.elecActiveNoteIdx = null;
     if (state.elecSelectedTypes.has(typeKey)) {
       state.elecSelectedTypes.delete(typeKey);
@@ -717,7 +723,9 @@
     const expandLabel = document.getElementById("elec-expand-label");
     if (expandLabel) {
       const activeCnt = state.elecSelectedTypes.size;
-      if (state.elecRoomSpotlightId) {
+      if (state.elecFocusId) {
+        expandLabel.textContent = `Electrical Legend · ${state.elecFocusId}`;
+      } else if (state.elecRoomSpotlightId) {
         expandLabel.textContent = `Electrical Legend · ${getRoomNameById(state.elecRoomSpotlightId)}`;
       } else if (activeCnt > 0) {
         expandLabel.textContent = `Electrical Legend · ${activeCnt} highlighted`;
@@ -788,6 +796,7 @@
           } else {
             state.elecActiveNoteIdx = idx;
             state.elecRoomSpotlightId = null;
+            state.elecFocusId = null;
             state.elecSelectedTypes.clear();
             ensureElecActive();
             if (note.action === "shades") {
@@ -802,21 +811,115 @@
     }
   }
 
+  function copyElecId(id) {
+    if (!id) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(id).catch(() => {});
+    }
+    const hint = document.getElementById("elec-tooltip-hint");
+    if (hint) {
+      hint.textContent = `Copied ${id} to clipboard`;
+      setTimeout(() => {
+        if (hint.textContent.startsWith("Copied")) hint.textContent = "Click symbol to copy ID";
+      }, 1600);
+    }
+  }
+
+  function focusElecItemById(id, zoomTo = true) {
+    const inv = window.ELECTRICAL_INVENTORY;
+    if (!inv) return;
+    let found = null;
+    for (const fl of ["first", "second"]) {
+      const m = (inv[fl] || []).find((it) => it.id === id);
+      if (m) { found = m; break; }
+    }
+    if (!found) return;
+
+    const curFloor = getActiveElecFloor();
+    if (curFloor !== found.floor) {
+      state.sheet = found.floor;
+    }
+    state.overlays.elec = true;
+    state.elecFocusId = found.id;
+    state.elecRoomSpotlightId = null;
+    state.elecActiveNoteIdx = null;
+    syncLayers();
+
+    if (zoomTo) {
+      fitBox({ x: found.x - 190, y: found.y - 130, w: 380, h: 260 }, true);
+    }
+  }
+
+  function handleElecIdSearch(query) {
+    const resEl = document.getElementById("elec-id-results");
+    if (!resEl) return;
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      resEl.classList.remove("open");
+      resEl.innerHTML = "";
+      return;
+    }
+    const inv = window.ELECTRICAL_INVENTORY;
+    const all = [...(inv?.first || []), ...(inv?.second || [])];
+    const matches = all.filter((it) => {
+      const meta = ELEC_META_BY_TYPE[it.type] || { label: it.type };
+      const hay = `${it.id} ${meta.label} ${getRoomNameById(it.room)} ${it.note}`.toLowerCase();
+      return hay.includes(q);
+    }).slice(0, 24);
+
+    if (!matches.length) {
+      resEl.innerHTML = `<div style="padding:7px;font-size:11px;color:var(--ui-text-muted);">No devices match "${query}"</div>`;
+      resEl.classList.add("open");
+      return;
+    }
+
+    resEl.innerHTML = matches.map((it) => {
+      const meta = ELEC_META_BY_TYPE[it.type] || { short: it.type, color: "#2563eb" };
+      const fl = it.floor === "second" ? "2F" : "1F";
+      return `
+        <button type="button" class="elec-id-result-btn" data-jump-id="${it.id}">
+          <span class="elec-id-code" style="--item-color:${meta.color}">${it.id}</span>
+          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ui-text-secondary);">${meta.short} · ${getRoomNameById(it.room)}</span>
+          <span style="font-family:var(--font-mono);font-size:9.5px;color:var(--ui-text-muted);">${fl}</span>
+        </button>`;
+    }).join("");
+    resEl.classList.add("open");
+
+    resEl.querySelectorAll(".elec-id-result-btn").forEach((btn) => {
+      const id = btn.dataset.jumpId;
+      btn.addEventListener("mouseenter", () => {
+        state.elecHoverId = id;
+        renderElecHighlights();
+      });
+      btn.addEventListener("mouseleave", () => {
+        if (state.elecHoverId === id) { state.elecHoverId = null; renderElecHighlights(); }
+      });
+      btn.addEventListener("click", () => {
+        state.elecHoverId = null;
+        focusElecItemById(id, true);
+        copyElecId(id);
+        resEl.classList.remove("open");
+      });
+    });
+  }
+
   function showElecTooltip(item, clientX, clientY) {
     const meta = ELEC_META_BY_TYPE[item.type] || { label: item.type, color: "#dc2626", group: "" };
     document.getElementById("elec-tooltip-dot").style.background = meta.color;
+    document.getElementById("elec-tooltip-id").textContent = item.id || "";
     document.getElementById("elec-tooltip-title").textContent = meta.label;
     const noteText = (item.note && item.note !== meta.label) ? item.note : meta.group;
     document.getElementById("elec-tooltip-note").textContent = noteText;
     const floorLbl = item.floor === "second" ? "2nd Floor" : "1st Floor";
     document.getElementById("elec-tooltip-room").textContent = `${getRoomNameById(item.room)} · ${floorLbl}`;
+    document.getElementById("elec-tooltip-hint").textContent = "Click symbol to copy ID";
 
     const rect = viewport.getBoundingClientRect();
     let left = clientX - rect.left + 14;
     let top = clientY - rect.top - 12;
     elecTooltipEl.classList.add("visible");
-    const tw = elecTooltipEl.offsetWidth || 200;
-    const th = elecTooltipEl.offsetHeight || 72;
+    const tw = elecTooltipEl.offsetWidth || 210;
+    const th = elecTooltipEl.offsetHeight || 84;
     if (left + tw > rect.width - 12) left = clientX - rect.left - tw - 14;
     if (top + th > rect.height - 12) top = rect.height - th - 12;
     if (top < 12) top = 12;
@@ -836,10 +939,12 @@
 
     const floor = getActiveElecFloor();
     const allItems = getFloorElecItems(floor);
+    const hasHoverId = Boolean(state.elecHoverId);
+    const hasFocusId = Boolean(state.elecFocusId);
     const hasHover = Boolean(state.elecHoverType);
     const hasSelected = state.elecSelectedTypes.size > 0;
     const hasRoomSpot = Boolean(state.elecRoomSpotlightId);
-    const anySpotlight = hasHover || hasSelected || hasRoomSpot;
+    const anySpotlight = hasHoverId || hasFocusId || hasHover || hasSelected || hasRoomSpot;
 
     if (!isElecVisible() && !anySpotlight) {
       hideElecTooltip();
@@ -858,20 +963,27 @@
     const unitPerPx = rect.width ? state.vb.w / rect.width : 1.8;
     const baseR = Math.max(7.5, Math.min(18, 9.5 * unitPerPx));
     const dotR = Math.max(2.6, Math.min(6, 3.2 * unitPerPx));
+    const idFontSize = Math.max(5.5, Math.min(12, 9.2 * unitPerPx));
 
-    // Determine which symbols to render visually vs as subtle interactive hit targets
+    // Render highlighted symbols first, then ID pills on top so tags never get buried under halos
+    const labelSpecs = [];
+
     allItems.forEach((item) => {
       const meta = ELEC_META_BY_TYPE[item.type] || { color: "#dc2626", label: item.type };
+      const isSingleFocus = item.id === state.elecHoverId || item.id === state.elecFocusId;
       let highlighted = false;
-      if (hasHover) {
+      if (hasHoverId) {
+        highlighted = item.id === state.elecHoverId;
+      } else if (hasHover) {
         highlighted = item.type === state.elecHoverType;
+      } else if (hasFocusId) {
+        highlighted = item.id === state.elecFocusId;
       } else if (hasRoomSpot) {
         highlighted = item.room === state.elecRoomSpotlightId;
       } else if (hasSelected) {
         highlighted = state.elecSelectedTypes.has(item.type);
       }
 
-      // In clean CAD default (no spotlight active), still mount transparent hover/click hit targets so tooltips work!
       if (!highlighted && anySpotlight) return;
 
       const g = document.createElementNS(SVG_NS, "g");
@@ -888,6 +1000,16 @@
         halo.setAttribute("class", "elec-marker-halo");
         g.appendChild(halo);
 
+        if (isSingleFocus) {
+          const ring = document.createElementNS(SVG_NS, "circle");
+          ring.setAttribute("cx", item.x);
+          ring.setAttribute("cy", item.y);
+          ring.setAttribute("r", (r * 1.55).toFixed(1));
+          ring.setAttribute("stroke", meta.color);
+          ring.setAttribute("class", "elec-marker-focus-ring");
+          g.appendChild(ring);
+        }
+
         const dot = document.createElementNS(SVG_NS, "circle");
         dot.setAttribute("cx", item.x);
         dot.setAttribute("cy", item.y);
@@ -895,6 +1017,10 @@
         dot.setAttribute("fill", meta.color);
         dot.setAttribute("class", "elec-marker-dot");
         g.appendChild(dot);
+
+        if (item.id && (state.elecShowIds || isSingleFocus)) {
+          labelSpecs.push({ item, meta, r });
+        }
       } else {
         const hit = document.createElementNS(SVG_NS, "circle");
         hit.setAttribute("cx", item.x);
@@ -911,10 +1037,69 @@
         if (state.measuring || wasDragging) return;
         e.stopPropagation();
         showElecTooltip(item, e.clientX, e.clientY);
+        copyElecId(item.id);
       });
 
       elecHighlightsSlot.appendChild(g);
     });
+
+    // Draw crisp ID tags above highlighted symbols (only when zoomed in enough or <= 45 tags so whole-floor stays uncluttered)
+    const showAllTags = labelSpecs.length <= 45 || unitPerPx < 1.15;
+    if (showAllTags && labelSpecs.length > 0) {
+      const labelLayer = document.createElementNS(SVG_NS, "g");
+      labelLayer.setAttribute("pointer-events", "none");
+      const placedBoxes = [];
+      const padX = idFontSize * 0.45;
+      const boxH = idFontSize * 1.45;
+      const gap = idFontSize * 0.22;
+
+      const overlaps = (x1, y1, w1, h1) =>
+        placedBoxes.some((b) => !(x1 + w1 + gap < b.x || b.x + b.w + gap < x1 || y1 + h1 + gap < b.y || b.y + b.h + gap < y1));
+
+      labelSpecs.forEach(({ item, meta, r }) => {
+        const boxW = item.id.length * idFontSize * 0.62 + padX * 2;
+        // Candidate positions: directly above, directly below, right, left, stacked higher/lower
+        const candidates = [
+          [item.x, item.y - r - boxH * 0.65],
+          [item.x, item.y + r + boxH * 0.65],
+          [item.x + r + boxW * 0.55, item.y],
+          [item.x - r - boxW * 0.55, item.y],
+          [item.x, item.y - r - boxH * 1.85],
+          [item.x, item.y + r + boxH * 1.85],
+          [item.x + r + boxW * 0.55, item.y - boxH * 1.15],
+          [item.x - r - boxW * 0.55, item.y + boxH * 1.15],
+        ];
+        let lx = candidates[0][0];
+        let ly = candidates[0][1];
+        for (const [cx, cy] of candidates) {
+          if (!overlaps(cx - boxW / 2, cy - boxH / 2, boxW, boxH)) {
+            lx = cx;
+            ly = cy;
+            break;
+          }
+        }
+        placedBoxes.push({ x: lx - boxW / 2, y: ly - boxH / 2, w: boxW, h: boxH });
+
+        const bg = document.createElementNS(SVG_NS, "rect");
+        bg.setAttribute("x", (lx - boxW / 2).toFixed(1));
+        bg.setAttribute("y", (ly - boxH / 2).toFixed(1));
+        bg.setAttribute("width", boxW.toFixed(1));
+        bg.setAttribute("height", boxH.toFixed(1));
+        bg.setAttribute("rx", (idFontSize * 0.3).toFixed(1));
+        bg.setAttribute("stroke", meta.color);
+        bg.setAttribute("class", "elec-id-bg");
+        labelLayer.appendChild(bg);
+
+        const txt = document.createElementNS(SVG_NS, "text");
+        txt.setAttribute("x", lx.toFixed(1));
+        txt.setAttribute("y", ly.toFixed(1));
+        txt.setAttribute("font-size", idFontSize.toFixed(1));
+        txt.setAttribute("class", "elec-id-text");
+        txt.textContent = item.id;
+        labelLayer.appendChild(txt);
+      });
+      elecHighlightsSlot.appendChild(labelLayer);
+    }
   }
 
   function renderRoomElecSummary(room) {
@@ -966,6 +1151,7 @@
         ensureElecActive();
         setElecDrawerOpen(true);
         state.elecRoomSpotlightId = null;
+        state.elecFocusId = null;
         state.elecSelectedTypes = new Set([t]);
         syncLayers();
         renderRoomElecSummary(room);
@@ -990,12 +1176,51 @@
         specialNotes.push(it.note);
       }
     });
-    // General house-wide electrical standards applicable to habitable rooms
     if (room.id !== "garage" && room.id !== "carport") {
       specialNotes.push("All lighting dimmable · Motorized shade prewire @ windows");
     }
     const notesEl = document.getElementById("room-elec-notes");
     notesEl.innerHTML = specialNotes.slice(0, 5).map((n) => `<li>${n}</li>`).join("");
+
+    // Populate collapsible Room Device IDs list (hover spotlights that exact device, click jumps & copies ID!)
+    const idsToggleLbl = document.getElementById("room-ids-toggle-label");
+    const idsListEl = document.getElementById("room-ids-list");
+    if (idsToggleLbl && idsListEl) {
+      idsToggleLbl.textContent = `Device IDs (${items.length}) — hover to locate, click to copy`;
+      idsListEl.classList.toggle("open", state.roomIdsOpen);
+      document.getElementById("btn-room-ids-toggle").setAttribute("aria-expanded", state.roomIdsOpen ? "true" : "false");
+      idsListEl.innerHTML = items.map((it) => {
+        const meta = ELEC_META_BY_TYPE[it.type] || { label: it.type, color: "#64748b" };
+        const act = state.elecFocusId === it.id ? " active" : "";
+        return `<button type="button" class="room-id-pill${act}" data-device-id="${it.id}" style="--pill-color:${meta.color}" title="${it.id}: ${meta.label} — ${it.note}">${it.id}</button>`;
+      }).join("");
+
+      idsListEl.querySelectorAll(".room-id-pill").forEach((pill) => {
+        const devId = pill.dataset.deviceId;
+        pill.addEventListener("mouseenter", () => {
+          ensureElecActive();
+          state.elecHoverId = devId;
+          syncLayers();
+        });
+        pill.addEventListener("mouseleave", () => {
+          if (state.elecHoverId === devId) {
+            state.elecHoverId = null;
+            renderElecHighlights();
+          }
+        });
+        pill.addEventListener("click", () => {
+          state.elecHoverId = null;
+          if (state.elecFocusId === devId) {
+            state.elecFocusId = null;
+            syncLayers();
+          } else {
+            focusElecItemById(devId, false);
+            copyElecId(devId);
+          }
+          renderRoomElecSummary(room);
+        });
+      });
+    }
 
     // Spotlight Room Electrical button state
     const spotBtn = document.getElementById("btn-room-elec-spotlight");
@@ -1014,6 +1239,7 @@
     } else {
       ensureElecActive();
       state.elecSelectedTypes.clear();
+      state.elecFocusId = null;
       state.elecActiveNoteIdx = null;
       state.elecRoomSpotlightId = room.id;
     }
@@ -1494,7 +1720,12 @@ ${visibleSlots}
     if (e.key === "-" || e.key === "_") { zoomAt(1.25); return; }
     if (e.key === "0") { fitBox(SHEET_META[state.sheet].box, true); return; }
     if (e.key.toLowerCase() === "m") { setMeasuring(!state.measuring); return; }
-    if (e.key.toLowerCase() === "e") { state.overlays.elec = !state.overlays.elec; syncLayers(); return; }
+    if (e.key.toLowerCase() === "e") {
+      state.overlays.elec = !state.overlays.elec;
+      if (state.overlays.elec) setElecDrawerOpen(true);
+      syncLayers();
+      return;
+    }
     if (e.key.toLowerCase() === "g") { state.overlays.ghost = !state.overlays.ghost; syncLayers(); return; }
     if (e.key.toLowerCase() === "r") { state.overlays.hotspots = !state.overlays.hotspots; syncLayers(); return; }
     if (e.key.toLowerCase() === "b") { document.getElementById("sidebar").classList.toggle("collapsed"); return; }
@@ -1505,6 +1736,13 @@ ${visibleSlots}
         renderMeasurements();
       } else if (state.measuring) {
         setMeasuring(false);
+      } else if (state.elecFocusId) {
+        state.elecFocusId = null;
+        syncLayers();
+        if (state.activeRoomId) {
+          const r = ROOMS.find((x) => x.id === state.activeRoomId);
+          if (r) renderRoomElecSummary(r);
+        }
       } else {
         closeRoomCard();
       }
@@ -1567,13 +1805,30 @@ ${visibleSlots}
       syncLayers();
     });
 
-    // Expandable Electrical Legend & General Notes Controls
+    // Expandable Electrical Legend, Device ID Search & General Notes Controls
     document.getElementById("btn-expand-elec").addEventListener("click", () => {
       setElecDrawerOpen(!state.elecDrawerOpen);
+    });
+    const idSearchInput = document.getElementById("elec-id-search");
+    idSearchInput.addEventListener("input", (e) => handleElecIdSearch(e.target.value));
+    idSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const firstBtn = document.querySelector("#elec-id-results .elec-id-result-btn");
+        if (firstBtn) firstBtn.click();
+      } else if (e.key === "Escape") {
+        idSearchInput.value = "";
+        handleElecIdSearch("");
+      }
+    });
+    document.getElementById("btn-elec-ids").addEventListener("click", () => {
+      state.elecShowIds = !state.elecShowIds;
+      document.getElementById("btn-elec-ids").classList.toggle("active", state.elecShowIds);
+      renderElecHighlights();
     });
     document.getElementById("btn-elec-all").addEventListener("click", () => {
       ensureElecActive();
       state.elecRoomSpotlightId = null;
+      state.elecFocusId = null;
       state.elecActiveNoteIdx = null;
       const items = getFloorElecItems(getActiveElecFloor());
       state.elecSelectedTypes = new Set(items.map((it) => it.type));
@@ -1582,7 +1837,11 @@ ${visibleSlots}
     document.getElementById("btn-elec-clear").addEventListener("click", () => {
       state.elecSelectedTypes.clear();
       state.elecRoomSpotlightId = null;
+      state.elecFocusId = null;
+      state.elecHoverId = null;
       state.elecActiveNoteIdx = null;
+      idSearchInput.value = "";
+      handleElecIdSearch("");
       syncLayers();
       if (state.activeRoomId) {
         const r = ROOMS.find((x) => x.id === state.activeRoomId);
@@ -1593,6 +1852,11 @@ ${visibleSlots}
       state.elecNotesOpen = !state.elecNotesOpen;
       document.getElementById("btn-elec-notes-toggle").setAttribute("aria-expanded", state.elecNotesOpen ? "true" : "false");
       document.getElementById("elec-notes-list").classList.toggle("open", state.elecNotesOpen);
+    });
+    document.getElementById("btn-room-ids-toggle").addEventListener("click", () => {
+      state.roomIdsOpen = !state.roomIdsOpen;
+      document.getElementById("btn-room-ids-toggle").setAttribute("aria-expanded", state.roomIdsOpen ? "true" : "false");
+      document.getElementById("room-ids-list").classList.toggle("open", state.roomIdsOpen);
     });
 
     document.getElementById("toggle-ghost").addEventListener("change", (e) => {
