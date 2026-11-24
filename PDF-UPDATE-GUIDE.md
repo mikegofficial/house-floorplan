@@ -168,17 +168,35 @@ This keeps numbering intuitive and predictable when discussing a room wall-by-wa
 
 ---
 
+### Step 5b: Rebuild Windows, Glazing IDs & Solar Shading Geometry (`layers/windows-data.js`)
+
+If any windows, exterior glazed doors, skylights, interior walls, roof overhangs, or tree locations changed on `A2.0`, `A2.1`, `A2.2`, `A2.3`, or `A1.0`, update [`scripts/extract_windows.py`](scripts/extract_windows.py) (`SCHEDULE_META`, `build_openings()`, `build_clip_zones()`, and `build_masses_and_trees()`) and run:
+
+```bash
+python3 scripts/extract_windows.py \
+  --layers-dir layers \
+  --out layers/windows-data.js
+```
+
+This verifies that extracted window counts match the `A2.3` Window Schedule (`A`–`V`) and regenerates:
+- All **glazed openings** with deterministic `<ROOM>-<MARK><NUM>` / `<ROOM>-D<DOOR>` IDs (e.g., `DIN-D1`..`DIN-D4`, `LIV-D108`, `PRM-N1`, `B3-T1`), exact sill/head heights, overhang depths, and True-North outward normal vectors (`trueNorthScreenDeg = 10.0°`).
+- **Interior wall clip zones (`clipZones`)** so sunbeams stop cleanly at interior walls.
+- **3D building massing (`masses`) & heritage tree canopies (`trees`)** for outdoor Pool/Courtyard shadows and seasonal Pecan canopy filtering.
+- **Privacy note:** Keep solar position constants rounded to generic integers (`solarLatDeg: 30.0`, `solarLonDeg: -98.0`) with zero GPS decimals, street names, or city labels.
+
+---
+
 ### Step 6: Update Metadata Only If Architectural Layout Changed
 
 Check if the revised PDF modified any of the following metadata in `app.js` / `index.html`:
 
 1. **Room bounding boxes & ceiling heights:**
    - Update `ROOMS` in `app.js` (`rect: { x, y, w, h }`, `ceiling`, `desc`, `tags`).
-   - Keep `ROOMS_FIRST` and `ROOMS_SECOND` in `scripts/extract_electrical.py` synchronized with `ROOMS` in `app.js`, then re-run `extract_electrical.py`.
+   - Keep `ROOMS_FIRST` and `ROOMS_SECOND` in `scripts/extract_electrical.py` and `clipZones` in `scripts/extract_windows.py` synchronized with `ROOMS` in `app.js`.
 2. **Door & Window Schedules (Sheet A2.3):**
-   - Run `pdftotext -f <A2.3_page> -l <A2.3_page> /tmp/revised_plans.pdf -` and update `DOOR_SCHEDULE` and `WINDOW_SCHEDULE` arrays in `app.js`.
+   - Run `pdftotext -f <A2.3_page> -l <A2.3_page> /tmp/revised_plans.pdf -` and update `DOOR_SCHEDULE` and `WINDOW_SCHEDULE` arrays in `app.js` (plus sill/head heights in `scripts/extract_windows.py`).
 3. **Site Area, FAR & Impervious Cover Totals (Sheet A0.0 / A1.0):**
-   - Run `pdftotext -f 1 -l 2 /tmp/revised_plans.pdf -` and update the Project Summary cards in `index.html` (panel `#panel-info`) and sheet descriptions in `README.md`.
+   - Run `pdftotext -f 1 -l 2 /tmp/revised_plans.pdf -` and update the Project Summary cards in `index.html` and sheet descriptions in `README.md`.
 4. **Exterior Elevations (Sibling repo `house-exterior`, Sheets A3.0 & A3.1):**
    - Extract the 4 elevation viewports (North, East, South, West) from Pages A3.0 and A3.1 via `pdftocairo -svg`.
    - Normalize each elevation's vertical origin so **`y = 0` = First Floor `0'-0"`** (all 4 roof peaks should align at the exact same negative `y`, e.g., `y = -533.2` for `+29'-7½"`).
@@ -196,9 +214,8 @@ Verify:
 - Zero JavaScript console errors and zero 404 network errors.
 - All 6 sheets (`A2.0`, `A2.1`, `A1.0`, `A2.2`, `E1.0`, `E1.2`) render sharp vector lines and crisp text.
 - Overlay alignment: `A2.0 + E1.0` and `A2.1 + E1.2` walls overlap cleanly; `A2.0 + A2.1 Ghost` aligns stairs and exterior perimeter.
-- Electrical Legend drawer: toggling Outlets (`O`), Switches (`SW` / `3W`), Recessed Cans (`C`), etc. highlights the correct symbols and displays readable `<ROOM>-<CODE><NUM>` ID pills.
-- ID Search (`#elec-id-search`): searching an ID (e.g., `KIT-3W1`) jumps to the symbol with a focus ring and copies the ID.
-- Room Inspector Card: clicking any room shows accurate electrical counts and expandable clickable Device ID pills.
+- Sunlight & Shadows (`S`) and Windows & Glazing (`W`): verify indoor sunbeams clip cleanly at interior walls, exterior shadows stay strictly outside indoor rooms, window `<ROOM>-<MARK><NUM>` ID pills align onto wall openings, and Room Cards report accurate direct-sun hours.
+- Electrical Legend drawer (`E`): toggling Outlets (`O`), Switches (`SW` / `3W`), Recessed Cans (`C`), etc. highlights the correct symbols and displays readable `<ROOM>-<CODE><NUM>` ID pills.
 
 #### 2. Run a Privacy Audit Before `git commit`
 Check every file in the repository for accidental leaks (replace the placeholders below with the actual owner surname, street name, street number, and firm names from the new PDF's title block):
@@ -214,12 +231,12 @@ rsvg-convert -w 2200 layers/first.svg -o /tmp/verify_first.png
 ```
 
 #### 3. Bump Asset Cache-Buster & Publish to GitHub Pages
-Before committing, increment the `?v=<N>` version query string on `styles.css`, `layers/plan-data.js`, `layers/elec-inventory.js`, and `app.js` in `index.html` so browsers immediately load the updated CSS/JS instead of serving cached subresources:
+Before committing, increment the `?v=<N>` version query string on `styles.css`, `layers/plan-data.js`, `layers/elec-inventory.js`, `layers/windows-data.js`, and `app.js` in `index.html` so browsers immediately load the updated CSS/JS instead of serving cached subresources:
 
 ```bash
 git status
 git add index.html styles.css app.js layers/ scripts/ README.md PDF-UPDATE-GUIDE.md
-git commit -m "Update vector floorplan and electrical inventory from revised plans"
+git commit -m "Update vector floorplan, windows/sunlight geometry, and electrical inventory"
 git push origin main
 ```
 GitHub Pages automatically rebuilds `https://mikegofficial.github.io/house-floorplan/` within ~30–60 seconds.
@@ -243,14 +260,17 @@ Requirements:
    commit messages). Do NOT commit the source PDF.
 2. Verify all sheet page numbers and recalibrate any shifted inter-sheet
    alignment offsets (`tx`, `ty`, `scale`) relative to Master A2.0 (`18.0 units/ft`).
-3. Re-run `scripts/extract_floorplan.py` and `scripts/extract_electrical.py` to
-   regenerate `layers/*.svg`, `layers/plan-data.js`, and `layers/elec-inventory.js`
-   preserving the `<ROOM>-<CODE><NUM>` electrical ID system.
+3. Re-run `scripts/extract_floorplan.py`, `scripts/extract_electrical.py`, and
+   `scripts/extract_windows.py` to regenerate `layers/*.svg`, `layers/plan-data.js`,
+   `layers/elec-inventory.js`, and `layers/windows-data.js` preserving the
+   `<ROOM>-<CODE><NUM>` electrical IDs and `<ROOM>-<MARK><NUM>` window IDs.
 4. Update `ROOMS`, `DOOR_SCHEDULE`, `WINDOW_SCHEDULE`, General Electrical Notes,
-   and FAR/IC site metrics if any values changed in the revision.
+   and FAR/IC site metrics if any values changed in the revision, and bump the
+   `?v=<N>` cache-buster in `index.html`.
 5. Update `house-exterior` if elevations (A3.0 / A3.1) changed, keeping `y = 0`
    normalized to First Floor `0'-0"`.
-6. Verify zero browser console errors, visually verify overlay alignment and
-   scrubbed Site Plan margins, run a privacy grep audit, and summarize what
-   changed compared to the previous revision before/after pushing to `main`.
+6. Verify zero browser console errors, visually verify overlay alignment,
+   sunlight clipping, and scrubbed Site Plan margins, run a privacy grep audit,
+   and summarize what changed compared to the previous revision before/after
+   pushing to `main`.
 ```

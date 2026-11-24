@@ -206,6 +206,7 @@ html, body {
   font-family: inherit;
   font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
   cursor: pointer;
   transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
 }
@@ -216,7 +217,8 @@ html, body {
   border-color: var(--ui-border-strong);
 }
 
-.icon-btn.active {
+.icon-btn.active,
+.icon-btn.active:hover {
   background: var(--ui-accent);
   color: var(--ui-accent-text);
   border-color: var(--ui-accent);
@@ -1868,6 +1870,399 @@ html, body {
   color: #ffffff;
 }
 
+/* ==========================================================================
+   Sunlight & Shadows Layer + Aligned Vector Windows & Glazing Overlay
+   ========================================================================== */
+
+/* Sidebar Solar Controls */
+.sun-season-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.sun-preset-btn {
+  height: 25px;
+  padding: 0 4px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface);
+  color: var(--ui-text-secondary);
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.sun-preset-btn:hover {
+  background: var(--ui-surface-hover);
+  color: var(--ui-text);
+}
+
+.sun-preset-btn.active {
+  background: #d97706;
+  border-color: #d97706;
+  color: #ffffff;
+}
+
+.sun-date-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--ui-text-secondary);
+}
+
+.sun-date-input {
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.sun-time-box {
+  padding: 7px 8px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface);
+  margin-bottom: 8px;
+}
+
+.sun-time-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.sun-clock-lbl {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #d97706;
+}
+
+.sun-angle-lbl {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ui-text-muted);
+}
+
+.sun-time-box input[type="range"] {
+  width: 100%;
+  accent-color: #d97706;
+  cursor: pointer;
+}
+
+.sun-rise-set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--ui-text-muted);
+}
+
+.sun-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sun-check-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--ui-text-secondary);
+  cursor: pointer;
+}
+
+.sun-check-row input[type="checkbox"] {
+  accent-color: #d97706;
+  cursor: pointer;
+}
+
+.sun-check-row em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--ui-text-muted);
+}
+
+/* Floating Daylight Timeline Scrubber on Canvas */
+.sun-scrubber-bar {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, #f59e0b 45%, var(--ui-border));
+  border-radius: var(--radius-lg);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow-md);
+  z-index: 15;
+  white-space: nowrap;
+}
+
+.sun-scrubber-bar.visible {
+  display: flex;
+}
+
+.sun-play-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #d97706;
+  background: color-mix(in srgb, #f59e0b 16%, var(--ui-surface));
+  color: #d97706;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.sun-play-btn:hover,
+.sun-play-btn.playing {
+  background: #d97706;
+  color: #ffffff;
+}
+
+.sun-scrubber-readout {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.18;
+  min-width: 98px;
+}
+
+.sun-hud-clock {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ui-text);
+}
+
+.sun-hud-meta {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--ui-text-muted);
+}
+
+.sun-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sun-slider-wrap input[type="range"] {
+  width: 175px;
+  accent-color: #d97706;
+  cursor: pointer;
+}
+
+.sun-edge-time {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--ui-text-muted);
+}
+
+.sun-hud-presets {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 6px;
+  border-left: 1px solid var(--ui-border);
+}
+
+.sun-hud-pill {
+  height: 23px;
+  padding: 0 7px;
+  border: 1px solid var(--ui-border);
+  border-radius: 5px;
+  background: var(--ui-surface-subtle);
+  color: var(--ui-text-secondary);
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sun-hud-pill:hover {
+  background: var(--ui-surface-hover);
+  color: var(--ui-text);
+}
+
+.sun-hud-pill.active {
+  background: #d97706;
+  border-color: #d97706;
+  color: #ffffff;
+}
+
+.sun-date-hud {
+  height: 23px;
+  padding: 0 5px;
+  border: 1px solid var(--ui-border);
+  border-radius: 5px;
+  background: var(--ui-surface-subtle);
+  color: var(--ui-text);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  width: 112px;
+}
+
+/* SVG Sun-Path Compass Arc & Cast Shadows */
+.ext-shadow-building {
+  fill: #0f172a;
+  fill-opacity: 0.14;
+}
+
+[data-theme="dark"] .ext-shadow-building,
+[data-theme="blueprint"] .ext-shadow-building {
+  fill: #020617;
+  fill-opacity: 0.34;
+}
+
+.ext-shadow-tree {
+  fill: #14532d;
+  fill-opacity: 0.13;
+}
+
+[data-theme="dark"] .ext-shadow-tree,
+[data-theme="blueprint"] .ext-shadow-tree {
+  fill: #052e16;
+  fill-opacity: 0.28;
+}
+
+.ext-tree-canopy-outline {
+  fill: #16a34a;
+  fill-opacity: 0.06;
+  stroke: #15803d;
+  stroke-opacity: 0.38;
+  stroke-width: 1.2;
+  stroke-dasharray: 5 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.sun-arc-ring {
+  fill: none;
+  stroke: var(--ui-text-muted);
+  stroke-opacity: 0.28;
+  stroke-width: 1.1;
+  stroke-dasharray: 3 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.sun-arc-trajectory {
+  fill: none;
+  stroke: #d97706;
+  stroke-opacity: 0.72;
+  stroke-width: 2.2;
+  stroke-dasharray: 6 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.sun-arc-cardinal {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  fill: var(--ui-text-muted);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.sun-arc-time-lbl {
+  font-family: var(--font-mono);
+  font-weight: 650;
+  fill: #b45309;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+[data-theme="dark"] .sun-arc-time-lbl,
+[data-theme="blueprint"] .sun-arc-time-lbl {
+  fill: #fbbf24;
+}
+
+/* Windows & Glazing Vector Overlay Markers */
+.win-marker-group {
+  cursor: pointer;
+}
+
+.win-bar-halo {
+  fill: none;
+  stroke-linecap: round;
+  stroke-opacity: 0.26;
+  vector-effect: non-scaling-stroke;
+}
+
+.win-bar-core {
+  fill: none;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.win-normal-tick {
+  fill: none;
+  stroke-linecap: round;
+  stroke-opacity: 0.85;
+  vector-effect: non-scaling-stroke;
+}
+
+.win-hit-line {
+  fill: none;
+  stroke: transparent;
+  stroke-linecap: round;
+  pointer-events: stroke;
+}
+
+/* Window Tooltip & Room Daylight Summary */
+.win-tooltip-sun {
+  margin-top: 4px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: color-mix(in srgb, #f59e0b 14%, var(--ui-surface-subtle));
+  color: #b45309;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .win-tooltip-sun,
+[data-theme="blueprint"] .win-tooltip-sun {
+  color: #fbbf24;
+}
+
+.room-sun-summary-box {
+  margin-bottom: 6px;
+  padding: 5px 7px;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, #f59e0b 32%, var(--ui-border));
+  background: color-mix(in srgb, #f59e0b 9%, var(--ui-surface-subtle));
+  font-size: 11px;
+  color: var(--ui-text);
+  line-height: 1.35;
+}
+
+.room-peak-sun-btn {
+  border-color: color-mix(in srgb, #d97706 45%, var(--ui-border-strong));
+}
+
 /* Responsive adjustments */
 @media (max-width: 960px) {
   .sidebar {
@@ -1878,7 +2273,8 @@ html, body {
     box-shadow: var(--ui-shadow-lg);
   }
   .brand-subtitle,
-  .coord-badge {
+  .coord-badge,
+  .sun-hud-presets {
     display: none;
   }
 }
@@ -1888,6 +2284,7 @@ html, body {
   .topbar,
   .sidebar,
   .bottom-dock,
+  .sun-scrubber-bar,
   .room-card,
   .measure-banner,
   .elec-tooltip,

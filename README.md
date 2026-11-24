@@ -33,10 +33,18 @@ npx serve .
 | Zoom In / Out / Fit to Screen | `+` / `-` / `0` |
 | Measure Real-World Distance (`ft'-in"`) or Area (`SF`) | `M` |
 | 90° Ortho Snap while measuring | Hold `Shift` |
+| Toggle Sunlight & Shadows Daylighting Simulation | `S` |
+| Toggle Aligned Vector Windows & Glazing Overlay | `W` |
 | Toggle Electrical Overlay (`E1.0` / `E1.2`) | `E` |
 | Toggle Adjacent Floor Ghost Overlay (`1st` ↔ `2nd`) | `G` |
 | Toggle Interactive Room Footprints | `R` |
 | Toggle Inspector Sidebar | `B` |
+
+## Sunlight & Shadows Simulation (`S`) + Windows & Glazing Overlay (`W`)
+
+- **True-North Solar Physics:** Calibrated directly to Sheet `A1.0` survey bearings (`True North = +10°` clockwise from right: Courtyard = East `080°`, Entry = North `350°`, ADU end = South `170°`, Heritage Pecan side = West `260°`) and Sheet `A2.3` window sill/head schedules.
+- **3D Architectural & Seasonal Shading:** Models `2'-0"` roof overhangs, covered Screened Patio/Carport roofs, courtyard wing self-shading, diffused translucent Glass Block (`U` / `V`), Bath 3 overhead Skylight (`B3-T1`), exterior 2-story Pool/Courtyard shadows, and toggleable deciduous Pecan tree canopy filtering (leafy summer dappled shade vs. bare winter branches).
+- **Aligned Vector Windows & Glazing (`<ROOM>-<MARK><NUM>`):** Toggle `Windows` (`W`) to highlight all 45 scheduled windows, glazed doors, and skylights (`DIN-D1`..`DIN-D4`, `LIV-D108`, `PRM-N1`, `B3-T1`, etc.), filter by glazing category, search/jump by ID, hover for live solar reach, or inspect direct-sun hours and click **Preview Peak Sun** inside any Room Card.
 
 ## Interactive Electrical Overlay & Device ID System
 
@@ -49,5 +57,5 @@ Every outlet, switch, light fixture, and specialty device is assigned a determin
 
 ## Updating from a Revised Architectural PDF
 
-See **[`PDF-UPDATE-GUIDE.md`](PDF-UPDATE-GUIDE.md)** for the full step-by-step system instructions, CLI commands (`scripts/extract_floorplan.py` and `scripts/extract_electrical.py`), privacy-scrubbing checklist, and a ready-to-paste AI agent prompt for processing future architect revisions.
+See **[`PDF-UPDATE-GUIDE.md`](PDF-UPDATE-GUIDE.md)** for the full step-by-step system instructions, CLI commands (`scripts/extract_floorplan.py`, `scripts/extract_electrical.py`, and `scripts/extract_windows.py`), privacy-scrubbing checklist, and a ready-to-paste AI agent prompt for processing future architect revisions.
 

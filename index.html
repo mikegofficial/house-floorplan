@@ -6,7 +6,7 @@
   <title>Interactive Vector Floorplan</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d4e89'/%3E%3Cpath d='M7 22V12l9-5 9 5v10H7zm4-3h10v-5.5L16 10.6 11 13.5V19z' fill='%23fff'/%3E%3C/svg%3E" />
   <meta name="description" content="Interactive pure-vector architectural floorplan viewer with First Floor, Second Floor, ADU, Site Plan, Roof Plan, Electrical Overlays, calibrated real-world measurement tools, and door/window schedules." />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
   <div class="app-shell">
@@ -88,6 +88,114 @@
           <!-- Panel 1: Layers & Navigation -->
           <section id="panel-layers" class="sidebar-panel active">
             <div class="section-label">Aligned Vector Overlays</div>
+
+            <!-- Sunlight & Daylighting Simulation Layer -->
+            <div class="layer-card" id="sun-layer-card">
+              <label class="layer-row">
+                <div class="layer-info">
+                  <span class="layer-dot" style="background: #f59e0b;"></span>
+                  <div>
+                    <div class="layer-name">Sunlight &amp; Shadows</div>
+                    <div class="layer-desc">Solar beams, overhangs &amp; pool shade (S)</div>
+                  </div>
+                </div>
+                <span class="toggle-switch">
+                  <input type="checkbox" id="toggle-sun" />
+                  <span class="toggle-track"></span>
+                </span>
+              </label>
+              <div class="opacity-slider-row">
+                <span>Intensity</span>
+                <input type="range" id="opacity-sun" min="25" max="100" value="85" />
+                <span id="opacity-sun-val" style="font-family:var(--font-mono);min-width:30px;text-align:right;">85%</span>
+              </div>
+              <button id="btn-expand-sun" class="elec-expand-btn" type="button" aria-expanded="false" aria-controls="sun-drawer">
+                <span id="sun-expand-label">Solar Date, Time &amp; Shade Options</span>
+                <svg class="elec-expand-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              <div id="sun-drawer" class="elec-legend-drawer">
+                <div class="sun-season-row">
+                  <button type="button" class="sun-preset-btn" data-sun-preset="summer" title="Summer Solstice (Longest Day, High Sun)">Jun 21</button>
+                  <button type="button" class="sun-preset-btn active" data-sun-preset="equinox" title="Spring / Fall Equinox">Equinox</button>
+                  <button type="button" class="sun-preset-btn" data-sun-preset="winter" title="Winter Solstice (Shortest Day, Low Deep Sun)">Dec 21</button>
+                  <button type="button" class="sun-preset-btn" data-sun-preset="today" title="Current Calendar Date">Today</button>
+                </div>
+                <div class="sun-date-row">
+                  <span>Date</span>
+                  <input type="date" id="sun-date-sidebar" class="sun-date-input" value="2026-03-20" />
+                </div>
+                <div class="sun-time-box">
+                  <div class="sun-time-head">
+                    <span id="sun-sidebar-clock" class="sun-clock-lbl">9:30 AM</span>
+                    <span id="sun-sidebar-angles" class="sun-angle-lbl">Alt 38° · ESE 108°</span>
+                  </div>
+                  <input type="range" id="sun-time-sidebar" min="360" max="1230" step="5" value="570" />
+                  <div class="sun-rise-set-row">
+                    <span id="sun-sidebar-rise">Rise 7:32 AM</span>
+                    <button type="button" id="btn-sun-play-sidebar" class="elec-mini-link">▶ Play Day</button>
+                    <span id="sun-sidebar-set">Set 7:41 PM</span>
+                  </div>
+                </div>
+                <div class="sun-options-list">
+                  <label class="sun-check-row">
+                    <input type="checkbox" id="chk-sun-trees" checked />
+                    <span>Pecan Tree Canopy Shade <em id="sun-tree-season-tag">(Seasonal)</em></span>
+                  </label>
+                  <label class="sun-check-row">
+                    <input type="checkbox" id="chk-sun-ext-shadows" checked />
+                    <span>Exterior Pool &amp; Courtyard Shadows</span>
+                  </label>
+                  <label class="sun-check-row">
+                    <input type="checkbox" id="chk-sun-arc" checked />
+                    <span>Sun-Path Compass Arc on Plan</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Aligned Vector Windows & Glazing Overlay -->
+            <div class="layer-card" id="win-layer-card">
+              <label class="layer-row">
+                <div class="layer-info">
+                  <span class="layer-dot" style="background: #0284c7;"></span>
+                  <div>
+                    <div class="layer-name">Windows &amp; Glazing</div>
+                    <div class="layer-desc">45 scheduled windows, doors &amp; skylight (W)</div>
+                  </div>
+                </div>
+                <span class="toggle-switch">
+                  <input type="checkbox" id="toggle-win" />
+                  <span class="toggle-track"></span>
+                </span>
+              </label>
+              <button id="btn-expand-win" class="elec-expand-btn" type="button" aria-expanded="false" aria-controls="win-legend-drawer">
+                <span id="win-expand-label">Window Schedule &amp; IDs</span>
+                <svg class="elec-expand-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              <div id="win-legend-drawer" class="elec-legend-drawer">
+                <div class="elec-id-search-wrap">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input id="win-id-search" type="search" placeholder="Jump to Window ID (e.g. DIN-D1, PRM-N1)..." />
+                  <div id="win-id-results" class="elec-id-results"></div>
+                </div>
+                <div class="elec-legend-toolbar">
+                  <span id="win-legend-floor-tag" class="elec-legend-floor-tag">1st Floor · A2.0 (28)</span>
+                  <div class="elec-legend-actions">
+                    <button id="btn-win-ids" class="elec-mini-link active" type="button" title="Show/Hide Window ID Pills">IDs</button>
+                    <button id="btn-win-all" class="elec-mini-link" type="button">All</button>
+                    <button id="btn-win-clear" class="elec-mini-link" type="button">Clear</button>
+                  </div>
+                </div>
+                <div id="win-legend-groups"></div>
+              </div>
+            </div>
 
             <div class="layer-card" id="elec-layer-card">
               <label class="layer-row">
@@ -220,15 +328,16 @@
               <button class="zone-btn" data-zone="adu">ADU Suite<span>607 SF · 1 Bed / 1 Bath</span></button>
               <button class="zone-btn" data-zone="garage">Garage &amp; Patio<span>2-Car + Screened Patio</span></button>
               <button class="zone-btn" data-zone="primary">Primary Suite<span>2nd Fl. Bed, Bath, Clst</span></button>
-              <button class="zone-btn" data-zone="pool">Pool &amp; Courtyard<span>Site Plan + South Yard</span></button>
+              <button class="zone-btn" data-zone="pool">Pool &amp; Courtyard<span>Site Plan + East Courtyard</span></button>
             </div>
 
             <div class="section-label">Keyboard Shortcuts</div>
             <div class="kv-list" style="font-size:11.5px;">
               <div class="kv-row"><span class="kv-key">Switch Sheets</span><span class="kv-val">1 – 6</span></div>
+              <div class="kv-row"><span class="kv-key">Sunlight / Windows</span><span class="kv-val">S / W</span></div>
+              <div class="kv-row"><span class="kv-key">Electrical / Ghost Floor</span><span class="kv-val">E / G</span></div>
               <div class="kv-row"><span class="kv-key">Measure Distance / Area</span><span class="kv-val">M</span></div>
               <div class="kv-row"><span class="kv-key">Ortho Snap (90°)</span><span class="kv-val">Hold Shift</span></div>
-              <div class="kv-row"><span class="kv-key">Electrical / Ghost Floor</span><span class="kv-val">E / G</span></div>
               <div class="kv-row"><span class="kv-key">Zoom In / Out / Fit</span><span class="kv-val">+ / - / 0</span></div>
             </div>
           </section>
@@ -328,15 +437,19 @@
       <main id="viewport" class="viewport-wrap" role="main" aria-label="Interactive Vector Floorplan Canvas">
         <svg id="plan-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
           <defs id="plan-defs"></defs>
-          <!-- Layer painting order: Site Underlay -> Primary/Ghost Floors -> Roof -> Electrical -> Room Hotspots -> Measurements -->
+          <defs id="solar-defs"></defs>
+          <!-- Layer painting order: Site -> Exterior Shadows -> Floors -> Sunlight -> Roof -> Electrical -> Hotspots -> Windows -> Elec Highlights -> Measurements -->
           <g id="world-root">
             <g id="slot-site" class="plan-layer"></g>
+            <g id="slot-ext-shadows"></g>
             <g id="slot-first" class="plan-layer"></g>
             <g id="slot-second" class="plan-layer"></g>
+            <g id="slot-sunlight"></g>
             <g id="slot-roof" class="plan-layer"></g>
             <g id="slot-elec1" class="plan-layer"></g>
             <g id="slot-elec2" class="plan-layer"></g>
             <g id="slot-hotspots"></g>
+            <g id="slot-windows"></g>
             <g id="slot-elec-highlights"></g>
             <g id="slot-measurements"></g>
           </g>
@@ -352,6 +465,19 @@
           <div id="elec-tooltip-note" class="elec-tooltip-note"></div>
           <div id="elec-tooltip-room" class="elec-tooltip-room"></div>
           <div id="elec-tooltip-hint" class="elec-tooltip-hint">Click symbol to copy ID</div>
+        </div>
+
+        <!-- Floating Interactive Window & Glazing Tooltip -->
+        <div id="win-tooltip" class="elec-tooltip" role="tooltip">
+          <div class="elec-tooltip-head">
+            <span id="win-tooltip-dot" class="elec-tooltip-dot"></span>
+            <span id="win-tooltip-id" class="elec-tooltip-id"></span>
+            <span id="win-tooltip-title"></span>
+          </div>
+          <div id="win-tooltip-specs" class="elec-tooltip-note"></div>
+          <div id="win-tooltip-sun" class="win-tooltip-sun"></div>
+          <div id="win-tooltip-room" class="elec-tooltip-room"></div>
+          <div id="win-tooltip-hint" class="elec-tooltip-hint">Click opening to copy ID</div>
         </div>
 
         <!-- Active Room Inspector Card -->
@@ -370,6 +496,31 @@
           </div>
           <div id="room-card-body" class="room-card-body"></div>
           <div id="room-card-tags" class="room-card-tags"></div>
+
+          <!-- Room Daylight & Windows Summary -->
+          <div id="room-sun-section" class="room-elec-section">
+            <div class="room-elec-head">
+              <span class="room-elec-title">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                Daylight &amp; Windows
+              </span>
+              <span id="room-win-total" class="room-elec-total"></span>
+            </div>
+            <div id="room-sun-window-summary" class="room-sun-summary-box"></div>
+            <div id="room-win-chips" class="room-elec-chips"></div>
+            <button id="btn-room-win-ids-toggle" class="room-ids-toggle" type="button" aria-expanded="false">
+              <span id="room-win-ids-toggle-label">Window IDs</span>
+              <svg class="elec-expand-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div id="room-win-ids-list" class="room-ids-list"></div>
+            <button id="btn-room-peak-sun" class="room-elec-spotlight-btn room-peak-sun-btn" type="button">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+              <span id="btn-room-peak-sun-label">Preview Peak Sun</span>
+            </button>
+          </div>
+
           <div id="room-elec-section" class="room-elec-section">
             <div class="room-elec-head">
               <span class="room-elec-title">
@@ -404,14 +555,14 @@
           <button id="btn-exit-measure" class="mini-btn">Done</button>
         </div>
 
-        <!-- Top-Right Sheet & North Arrow Badge -->
-        <div class="compass-badge" aria-hidden="true">
-          <!-- Compass orientation indicator -->
-          <svg width="26" height="26" viewBox="0 0 36 36">
+        <!-- Top-Right Sheet & True North Arrow Badge (True North = +10° clockwise from +X right) -->
+        <div class="compass-badge" title="True North points right (+10° clockwise): Courtyard = East, Entry = North, ADU = South, Pecan Trees = West">
+          <svg width="28" height="28" viewBox="0 0 36 36" aria-hidden="true">
             <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" stroke-width="1.3" opacity="0.45" />
-            <g transform="rotate(-80 18 18)">
-              <polygon points="18,4 23,21 18,17.5 13,21" fill="currentColor" />
+            <g transform="rotate(100 18 18)">
+              <polygon points="18,4 22.5,21 18,17.5 13.5,21" fill="currentColor" />
             </g>
+            <text x="31" y="22.5" font-size="7.5" font-weight="800" font-family="monospace" fill="currentColor" text-anchor="middle">N</text>
           </svg>
           <div class="compass-meta">
             <span id="hud-sheet" class="compass-sheet">A2.0 · FIRST FLOOR</span>
@@ -434,6 +585,26 @@
           </div>
         </div>
 
+        <!-- Floating Daylight Timeline Scrubber (visible when Sunlight layer is active) -->
+        <div id="sun-scrubber-bar" class="sun-scrubber-bar" role="region" aria-label="Daylight Timeline Controls">
+          <button type="button" id="btn-sun-play" class="sun-play-btn" title="Play / Pause Full-Day Timelapse" aria-label="Play daylight timelapse">▶</button>
+          <div class="sun-scrubber-readout">
+            <span id="sun-hud-clock" class="sun-hud-clock">9:30 AM</span>
+            <span id="sun-hud-meta" class="sun-hud-meta">Alt 38° · ESE 108°</span>
+          </div>
+          <div class="sun-slider-wrap">
+            <span id="sun-hud-rise" class="sun-edge-time" title="Sunrise">7:32a</span>
+            <input type="range" id="sun-time-hud" min="360" max="1230" step="5" value="570" aria-label="Time of day" />
+            <span id="sun-hud-set" class="sun-edge-time" title="Sunset">7:41p</span>
+          </div>
+          <div class="sun-hud-presets">
+            <button type="button" class="sun-hud-pill" data-sun-preset="summer">Jun 21</button>
+            <button type="button" class="sun-hud-pill active" data-sun-preset="equinox">Equinox</button>
+            <button type="button" class="sun-hud-pill" data-sun-preset="winter">Dec 21</button>
+            <input type="date" id="sun-date-hud" class="sun-date-hud" value="2026-03-20" aria-label="Solar date" />
+          </div>
+        </div>
+
         <!-- Bottom-Center CAD Controls Dock -->
         <div class="bottom-dock" role="toolbar" aria-label="Canvas Controls">
           <button id="btn-zoom-out" class="icon-btn" title="Zoom Out (-)" aria-label="Zoom out">
@@ -451,6 +622,21 @@
               <path d="m14.5 12.5 2-2" /><path d="m11.5 9.5 2-2" /><path d="m8.5 6.5 2-2" /><path d="m17.5 15.5 2-2" />
             </svg>
             <span>Measure</span>
+          </button>
+          <button id="btn-quick-sun" class="icon-btn" title="Toggle Sunlight &amp; Shadows Simulation (S)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+            </svg>
+            <span>Sunlight</span>
+          </button>
+          <button id="btn-quick-win" class="icon-btn" title="Toggle Windows &amp; Glazing Overlay (W)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <line x1="12" y1="4" x2="12" y2="20" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+            </svg>
+            <span>Windows</span>
           </button>
           <button id="btn-quick-elec" class="icon-btn" title="Toggle Electrical Overlay (E)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -475,8 +661,9 @@
   </div>
 
   <!-- Pure Vector Layer Data Bundle (works over file:// and http:// with zero CORS issues) -->
-  <script src="layers/plan-data.js?v=3"></script>
-  <script src="layers/elec-inventory.js?v=3"></script>
-  <script src="app.js?v=3"></script>
+  <script src="layers/plan-data.js?v=4"></script>
+  <script src="layers/elec-inventory.js?v=4"></script>
+  <script src="layers/windows-data.js?v=4"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
