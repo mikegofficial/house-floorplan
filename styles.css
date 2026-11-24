@@ -1,0 +1,1260 @@
+/* ==========================================================================
+   House Floorplan — Interactive Architectural Vector Floorplan
+   Clean Studio Design System & Native SVG Vector Theming
+   ========================================================================== */
+
+:root {
+  /* UI Chrome Tokens (Light Studio default) */
+  --ui-bg: #f3f1ec;
+  --ui-surface: #ffffff;
+  --ui-surface-subtle: #f8f6f2;
+  --ui-surface-hover: #efece5;
+  --ui-border: #e1ddd4;
+  --ui-border-strong: #cdc7ba;
+  --ui-text: #181a1d;
+  --ui-text-secondary: #535862;
+  --ui-text-muted: #7c828d;
+  --ui-accent: #1d4e89;
+  --ui-accent-soft: rgba(29, 78, 137, 0.1);
+  --ui-accent-text: #ffffff;
+  --ui-danger: #c62828;
+  --ui-shadow-sm: 0 1px 2px rgba(18, 20, 24, 0.06);
+  --ui-shadow-md: 0 6px 24px rgba(18, 20, 24, 0.09), 0 1px 3px rgba(18, 20, 24, 0.05);
+  --ui-shadow-lg: 0 14px 40px rgba(18, 20, 24, 0.14);
+
+  /* Vector Canvas Theme: Architectural Drafting Paper (default) */
+  --canvas-bg: #f6f3ec;
+  --canvas-dot: rgba(28, 30, 33, 0.065);
+  --v-paper: #f6f3ec;
+  --v-ink: #1a1c1f;
+  --v-mid: #4e545c;
+  --v-dim: #7f868f;
+  --v-light: #b6bcc4;
+  --v-wall: #8b9098;
+  --v-shade: #d2d6db;
+  --v-tint: #eae7df;
+  --v-elec: #c62828;
+  --v-ghost-stroke: #1d4ed8;
+  --v-ghost-dim: #60a5fa;
+  --v-ghost-wall: rgba(59, 130, 246, 0.24);
+  --v-measure: #d9480f;
+  --v-measure-fill: rgba(217, 72, 15, 0.12);
+  --v-room-fill: rgba(29, 78, 137, 0.12);
+  --v-room-stroke: rgba(29, 78, 137, 0.72);
+  --v-room-active-fill: rgba(29, 78, 137, 0.22);
+
+  /* Typography */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Layout */
+  --topbar-h: 54px;
+  --sidebar-w: 316px;
+  --radius-sm: 6px;
+  --radius-md: 9px;
+  --radius-lg: 12px;
+}
+
+/* Theme: Studio White */
+[data-theme="white"] {
+  --canvas-bg: #ffffff;
+  --canvas-dot: rgba(17, 19, 21, 0.055);
+  --v-paper: #ffffff;
+  --v-ink: #111315;
+  --v-mid: #495057;
+  --v-dim: #7b838c;
+  --v-light: #adb5bd;
+  --v-wall: #7c828a;
+  --v-shade: #cfd4da;
+  --v-tint: #f1f3f5;
+  --v-elec: #d32f2f;
+}
+
+/* Theme: Architectural Blueprint */
+[data-theme="blueprint"] {
+  --ui-bg: #08182a;
+  --ui-surface: #0c2138;
+  --ui-surface-subtle: #0f2843;
+  --ui-surface-hover: #153558;
+  --ui-border: #1b3f66;
+  --ui-border-strong: #275687;
+  --ui-text: #eef6ff;
+  --ui-text-secondary: #a9c7e6;
+  --ui-text-muted: #769cc4;
+  --ui-accent: #38bdf8;
+  --ui-accent-soft: rgba(56, 189, 248, 0.16);
+  --ui-accent-text: #06182a;
+
+  --canvas-bg: #0c2642;
+  --canvas-dot: rgba(147, 210, 255, 0.11);
+  --v-paper: #0c2642;
+  --v-ink: #f0f7ff;
+  --v-mid: #a8d4f8;
+  --v-dim: #6ca6d8;
+  --v-light: #3d75a8;
+  --v-wall: #2b679e;
+  --v-shade: #1a4772;
+  --v-tint: #123457;
+  --v-elec: #fbbf24;
+  --v-ghost-stroke: #34d399;
+  --v-ghost-dim: #6ee7b7;
+  --v-ghost-wall: rgba(52, 211, 153, 0.22);
+  --v-measure: #fb923c;
+  --v-measure-fill: rgba(251, 146, 60, 0.16);
+  --v-room-fill: rgba(56, 189, 248, 0.15);
+  --v-room-stroke: rgba(125, 211, 252, 0.85);
+  --v-room-active-fill: rgba(56, 189, 248, 0.28);
+}
+
+/* Theme: Dark CAD Studio */
+[data-theme="dark"] {
+  --ui-bg: #0f1216;
+  --ui-surface: #161a20;
+  --ui-surface-subtle: #1c2129;
+  --ui-surface-hover: #242b35;
+  --ui-border: #2a313c;
+  --ui-border-strong: #394352;
+  --ui-text: #edf1f7;
+  --ui-text-secondary: #a3aebf;
+  --ui-text-muted: #727d8f;
+  --ui-accent: #60a5fa;
+  --ui-accent-soft: rgba(96, 165, 250, 0.15);
+  --ui-accent-text: #0d131c;
+
+  --canvas-bg: #12151a;
+  --canvas-dot: rgba(255, 255, 255, 0.06);
+  --v-paper: #12151a;
+  --v-ink: #e8edf4;
+  --v-mid: #9ba5b4;
+  --v-dim: #6c7788;
+  --v-light: #434c59;
+  --v-wall: #3c4654;
+  --v-shade: #252c36;
+  --v-tint: #1b2028;
+  --v-elec: #ff5c5c;
+  --v-ghost-stroke: #38bdf8;
+  --v-ghost-dim: #7dd3fc;
+  --v-ghost-wall: rgba(56, 189, 248, 0.22);
+  --v-measure: #f59e0b;
+  --v-measure-fill: rgba(245, 158, 11, 0.16);
+  --v-room-fill: rgba(96, 165, 250, 0.14);
+  --v-room-stroke: rgba(147, 197, 253, 0.8);
+  --v-room-active-fill: rgba(96, 165, 250, 0.26);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ui-text);
+  background: var(--ui-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Layout Shell
+   ========================================================================== */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.topbar {
+  height: var(--topbar-h);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px;
+  background: var(--ui-surface);
+  border-bottom: 1px solid var(--ui-border);
+  z-index: 30;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface);
+  color: var(--ui-text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.icon-btn:hover {
+  background: var(--ui-surface-hover);
+  color: var(--ui-text);
+  border-color: var(--ui-border-strong);
+}
+
+.icon-btn.active {
+  background: var(--ui-accent);
+  color: var(--ui-accent-text);
+  border-color: var(--ui-accent);
+}
+
+.brand-title {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brand-title h1 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--ui-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  color: var(--ui-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Primary Sheet Switcher Tabs */
+.sheet-tabs {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  background: var(--ui-surface-subtle);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.sheet-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.sheet-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 11px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ui-text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+.sheet-tab:hover {
+  color: var(--ui-text);
+  background: var(--ui-surface-hover);
+}
+
+.sheet-tab.active {
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-weight: 600;
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.sheet-code {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--ui-surface-hover);
+  color: var(--ui-text-muted);
+}
+
+.sheet-tab.active .sheet-code {
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent);
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  background: var(--ui-surface-subtle);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+}
+
+.theme-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.theme-swatch:hover {
+  transform: scale(1.08);
+}
+
+.theme-swatch.active {
+  border-color: var(--ui-accent);
+  box-shadow: 0 0 0 1px var(--ui-accent);
+}
+
+.swatch-paper { background: linear-gradient(135deg, #f6f3ec 55%, #cfc7b8 55%); }
+.swatch-white { background: linear-gradient(135deg, #ffffff 55%, #d6dae0 55%); }
+.swatch-blueprint { background: linear-gradient(135deg, #0c2642 55%, #38bdf8 55%); }
+.swatch-dark { background: linear-gradient(135deg, #161a20 55%, #60a5fa 55%); }
+
+/* ==========================================================================
+   Workspace Split: Collapsible Sidebar + Infinite Vector Viewport
+   ========================================================================== */
+
+.workspace {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  position: relative;
+}
+
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--ui-surface);
+  border-right: 1px solid var(--ui-border);
+  z-index: 20;
+  transition: margin-left 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sidebar.collapsed {
+  margin-left: calc(var(--sidebar-w) * -1);
+}
+
+.sidebar-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--ui-border);
+  background: var(--ui-surface-subtle);
+}
+
+.sidebar-nav-btn {
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ui-text-secondary);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.sidebar-nav-btn:hover {
+  color: var(--ui-text);
+  background: var(--ui-surface-hover);
+}
+
+.sidebar-nav-btn.active {
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.sidebar-panel {
+  display: none;
+}
+
+.sidebar-panel.active {
+  display: block;
+}
+
+.section-label {
+  font-size: 10.5px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ui-text-muted);
+  margin: 14px 0 8px;
+}
+
+.section-label:first-child {
+  margin-top: 2px;
+}
+
+/* Search Input */
+.search-box {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.search-box input {
+  width: 100%;
+  height: 32px;
+  padding: 0 10px 0 30px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface-subtle);
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: 12.5px;
+  outline: none;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.search-box input:focus {
+  border-color: var(--ui-accent);
+  background: var(--ui-surface);
+}
+
+.search-box svg {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ui-text-muted);
+  pointer-events: none;
+}
+
+/* Layer Overlay Toggles */
+.layer-card {
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-md);
+  background: var(--ui-surface-subtle);
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.layer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.layer-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.layer-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.layer-name {
+  font-size: 12.5px;
+  font-weight: 550;
+  color: var(--ui-text);
+}
+
+.layer-desc {
+  font-size: 11px;
+  color: var(--ui-text-muted);
+  margin-top: 1px;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 34px;
+  height: 19px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  background: var(--ui-border-strong);
+  transition: background 140ms ease;
+}
+
+.toggle-track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 140ms ease;
+}
+
+.toggle-switch input:checked + .toggle-track {
+  background: var(--ui-accent);
+}
+
+.toggle-switch input:checked + .toggle-track::after {
+  transform: translateX(15px);
+}
+
+.opacity-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--ui-border);
+  font-size: 11px;
+  color: var(--ui-text-muted);
+}
+
+.opacity-slider-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--ui-accent);
+  cursor: pointer;
+}
+
+/* Quick Zone Jump Buttons */
+.zone-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.zone-btn {
+  padding: 7px 9px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.zone-btn:hover {
+  background: var(--ui-surface-hover);
+  border-color: var(--ui-border-strong);
+}
+
+.zone-btn span {
+  display: block;
+  font-size: 10.5px;
+  color: var(--ui-text-muted);
+  font-weight: 400;
+}
+
+/* Room List */
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.room-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 110ms ease, border-color 110ms ease;
+}
+
+.room-item:hover {
+  background: var(--ui-surface-hover);
+}
+
+.room-item.active {
+  background: var(--ui-accent-soft);
+  border-color: var(--ui-accent);
+}
+
+.room-item-title {
+  font-weight: 550;
+}
+
+.room-item-meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ui-text-muted);
+  white-space: nowrap;
+}
+
+/* Schedules Table */
+.sched-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.sched-tab {
+  flex: 1;
+  height: 28px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface-subtle);
+  color: var(--ui-text-secondary);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.sched-tab.active {
+  background: var(--ui-accent);
+  color: var(--ui-accent-text);
+  border-color: var(--ui-accent);
+}
+
+.sched-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+}
+
+.sched-table th {
+  text-align: left;
+  padding: 5px 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ui-text-muted);
+  border-bottom: 1px solid var(--ui-border-strong);
+  position: sticky;
+  top: 0;
+  background: var(--ui-surface);
+}
+
+.sched-table td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--ui-border);
+  vertical-align: top;
+}
+
+.sched-mark {
+  font-family: var(--font-mono);
+  font-weight: 650;
+  color: var(--ui-accent);
+  white-space: nowrap;
+}
+
+.sched-dim {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.sched-note {
+  color: var(--ui-text-secondary);
+  font-size: 11px;
+}
+
+/* Project / Site Stats */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.stat-card {
+  padding: 9px 10px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-md);
+  background: var(--ui-surface-subtle);
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ui-text);
+}
+
+.stat-label {
+  font-size: 10.5px;
+  color: var(--ui-text-muted);
+  margin-top: 2px;
+}
+
+.kv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.kv-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--ui-border);
+}
+
+.kv-row:last-child {
+  border-bottom: none;
+}
+
+.kv-key {
+  color: var(--ui-text-secondary);
+}
+
+.kv-val {
+  font-family: var(--font-mono);
+  font-weight: 550;
+  text-align: right;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--ui-border);
+  overflow: hidden;
+  margin: 5px 0 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--ui-accent);
+  border-radius: 99px;
+}
+
+.notes-list {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 11.5px;
+  color: var(--ui-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ==========================================================================
+   Vector Canvas Viewport & Native SVG Styling
+   ========================================================================== */
+
+.viewport-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--canvas-bg);
+  background-image: radial-gradient(var(--canvas-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.viewport-wrap.panning {
+  cursor: grabbing;
+}
+
+.viewport-wrap.measuring {
+  cursor: crosshair;
+}
+
+#plan-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Native Semantic Vector Layer Styling */
+#plan-svg .s-ink   { stroke: var(--v-ink); }
+#plan-svg .s-mid   { stroke: var(--v-mid); }
+#plan-svg .s-dim   { stroke: var(--v-dim); }
+#plan-svg .s-light { stroke: var(--v-light); }
+#plan-svg .s-elec  { stroke: var(--v-elec); }
+#plan-svg .s-paper { stroke: var(--v-paper); }
+
+#plan-svg .f-ink   { fill: var(--v-ink); }
+#plan-svg .f-paper { fill: var(--v-paper); }
+#plan-svg .f-wall  { fill: var(--v-wall); }
+#plan-svg .f-shade { fill: var(--v-shade); }
+#plan-svg .f-tint  { fill: var(--v-tint); }
+#plan-svg .f-elec  { fill: var(--v-elec); }
+
+/* Vector Layer Visibility & Overlay Modes */
+.plan-layer {
+  display: none;
+}
+
+.plan-layer.visible {
+  display: inline;
+}
+
+/* Ghost Adjacent Floor Overlay Styling */
+.plan-layer.mode-ghost .s-ink,
+.plan-layer.mode-ghost .s-mid {
+  stroke: var(--v-ghost-stroke);
+}
+.plan-layer.mode-ghost .s-dim,
+.plan-layer.mode-ghost .s-light {
+  stroke: var(--v-ghost-dim);
+}
+.plan-layer.mode-ghost .f-ink {
+  fill: var(--v-ghost-stroke);
+}
+.plan-layer.mode-ghost .f-wall {
+  fill: var(--v-ghost-wall);
+}
+.plan-layer.mode-ghost .f-paper {
+  fill: none;
+}
+
+/* Site Context Underlay Styling */
+.plan-layer.mode-underlay {
+  opacity: 0.34;
+}
+.plan-layer.mode-underlay .f-paper {
+  fill: none;
+}
+
+/* Electrical Overlay Styling (when layered over A2.0 or A2.1) */
+.plan-layer.mode-elec-overlay .f-paper,
+.plan-layer.mode-elec-overlay .f-wall,
+.plan-layer.mode-elec-overlay .f-shade,
+.plan-layer.mode-elec-overlay .f-tint {
+  fill: none;
+}
+.plan-layer.mode-elec-overlay .s-ink,
+.plan-layer.mode-elec-overlay .s-mid,
+.plan-layer.mode-elec-overlay .s-dim {
+  stroke: var(--v-elec);
+  stroke-opacity: 0.45;
+}
+.plan-layer.mode-elec-overlay .f-ink {
+  fill: var(--v-elec);
+  fill-opacity: 0.85;
+}
+.plan-layer.mode-elec-overlay .s-elec {
+  stroke: var(--v-elec);
+  stroke-opacity: 1;
+}
+
+/* Room Interactive Hotspots Layer */
+.room-hotspot {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: fill 140ms ease, stroke 140ms ease;
+}
+
+.hotspots-visible .room-hotspot {
+  fill: var(--v-room-fill);
+  stroke: var(--v-room-stroke);
+  stroke-dasharray: 4 3;
+}
+
+.room-hotspot:hover,
+.room-hotspot.active {
+  fill: var(--v-room-active-fill);
+  stroke: var(--v-room-stroke);
+  stroke-width: 2.2;
+  stroke-dasharray: none;
+}
+
+/* Measurement Overlay SVG */
+.measure-line {
+  stroke: var(--v-measure);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.measure-line.preview {
+  stroke-dasharray: 6 4;
+  opacity: 0.85;
+}
+
+.measure-poly {
+  fill: var(--v-measure-fill);
+  stroke: var(--v-measure);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.measure-dot {
+  fill: var(--ui-surface);
+  stroke: var(--v-measure);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.measure-tag-bg {
+  fill: var(--v-measure);
+}
+
+.measure-tag-text {
+  fill: #ffffff;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* ==========================================================================
+   Floating Canvas HUD Elements
+   ========================================================================== */
+
+/* Active Room Inspector Card */
+.room-card {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  max-width: 300px;
+  padding: 12px 14px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-lg);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow-md);
+  z-index: 15;
+  display: none;
+}
+
+.room-card.visible {
+  display: block;
+}
+
+.room-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.room-card h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.room-card-badge {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--ui-accent-soft);
+  color: var(--ui-accent);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.room-card-close {
+  border: none;
+  background: transparent;
+  color: var(--ui-text-muted);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.room-card-close:hover {
+  background: var(--ui-surface-hover);
+  color: var(--ui-text);
+}
+
+.room-card-body {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--ui-text-secondary);
+}
+
+.room-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.room-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-surface-subtle);
+  color: var(--ui-text-secondary);
+}
+
+/* North Arrow Compass Badge (Top Right of Canvas) */
+.compass-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-md);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow-sm);
+  z-index: 12;
+  pointer-events: none;
+}
+
+.compass-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.compass-sheet {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--ui-text);
+}
+
+.compass-scale {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ui-text-muted);
+}
+
+/* Measurement Banner (when measuring) */
+.measure-banner {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--v-measure);
+  border-radius: var(--radius-md);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow-md);
+  z-index: 16;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.measure-banner.visible {
+  display: flex;
+}
+
+.measure-banner strong {
+  color: var(--v-measure);
+}
+
+.measure-banner .mini-btn {
+  height: 24px;
+  padding: 0 9px;
+  border: 1px solid var(--ui-border);
+  border-radius: 5px;
+  background: var(--ui-surface-subtle);
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 550;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.measure-banner .mini-btn.active {
+  background: var(--v-measure);
+  color: #ffffff;
+  border-color: var(--v-measure);
+}
+
+/* Bottom Floating CAD Control Dock */
+.bottom-dock {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-lg);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow-md);
+  z-index: 15;
+}
+
+.dock-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--ui-border);
+  margin: 0 2px;
+}
+
+.zoom-readout {
+  min-width: 48px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ui-text-secondary);
+}
+
+/* Dynamic Scale Bar (Bottom Left) */
+.scale-bar-widget {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 10px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-md);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow-sm);
+  z-index: 12;
+  pointer-events: none;
+}
+
+.scale-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ui-text-secondary);
+}
+
+.scale-bar-graphic {
+  height: 6px;
+  border: 1px solid var(--ui-text);
+  display: flex;
+  overflow: hidden;
+  background: var(--ui-surface);
+}
+
+.scale-seg-dark {
+  flex: 1;
+  background: var(--ui-text);
+}
+
+.scale-seg-light {
+  flex: 1;
+  background: transparent;
+}
+
+/* Live Cursor Coordinates (Bottom Right) */
+.coord-badge {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  padding: 6px 10px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-md);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ui-text-secondary);
+  z-index: 12;
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .sidebar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    box-shadow: var(--ui-shadow-lg);
+  }
+  .brand-subtitle,
+  .coord-badge {
+    display: none;
+  }
+}
+
+/* Clean Vector Print Stylesheet */
+@media print {
+  .topbar,
+  .sidebar,
+  .bottom-dock,
+  .room-card,
+  .measure-banner,
+  .coord-badge {
+    display: none !important;
+  }
+  .viewport-wrap {
+    background: #ffffff !important;
+  }
+}
