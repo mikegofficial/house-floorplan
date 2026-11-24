@@ -262,6 +262,75 @@
     ["V", "1'-4\"",    "10'-0\"",   "5", "GLASS BLOCK", "Reading Nook, Powder & ADU"],
   ];
 
+  // Interactive Electrical Legend Taxonomy (Grouped, Color-Coded, Active-Only per Floor)
+  const ELEC_GROUPS = [
+    {
+      id: "lighting",
+      label: "Lighting",
+      color: "#d97706",
+      items: [
+        { type: "recessed_can", label: "Recessed Can Fixture", short: "Recessed Cans", color: "#d97706", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="2.5" width="11" height="11"/><circle cx="8" cy="8" r="3.5"/></svg>' },
+        { type: "ceiling_fan",  label: "Ceiling Fan",          short: "Ceiling Fans",  color: "#0284c7", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="1.5"/><path d="M8 6.5C7 3 9 3 8 6.5M9.5 8C13 7 13 9 9.5 8M8 9.5C9 13 7 13 8 9.5M6.5 8C3 9 3 7 6.5 8"/></svg>' },
+        { type: "pendant",      label: "Hanging / Pendant",    short: "Pendants / Chandeliers", color: "#ea580c", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="2.2"/></svg>' },
+        { type: "sconce",       label: "Wall / Vanity Sconce", short: "Wall Sconces",  color: "#b45309", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6.5" r="3.8"/><line x1="8" y1="10.3" x2="8" y2="14"/><line x1="5" y1="14" x2="11" y2="14"/></svg>' },
+        { type: "uc_light",     label: "Under-Cabinet LED",    short: "U.C. Lights",   color: "#ca8a04", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="12" height="4" rx="1"/><line x1="5" y1="12.5" x2="5" y2="14"/><line x1="8" y1="12.5" x2="8" y2="14"/><line x1="11" y1="12.5" x2="11" y2="14"/></svg>' },
+        { type: "accent_light", label: "Accent / Toe-Kick LED",short: "Accent Lighting",color: "#eab308", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v2M8 12v2M2 8h2M12 8h2M4 4l1.4 1.4M10.6 10.6L12 12M12 4l-1.4 1.4M5.4 10.6L4 12"/><circle cx="8" cy="8" r="2"/></svg>' },
+        { type: "landscape",    label: "Landscape Lighting",   short: "Landscape Lights", color: "#65a30d", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2.5L13 8H3l5-5.5z"/><line x1="8" y1="8" x2="8" y2="14"/><line x1="5" y1="14" x2="11" y2="14"/></svg>' },
+      ],
+    },
+    {
+      id: "outlets",
+      label: "Outlets & Power",
+      color: "#2563eb",
+      items: [
+        { type: "outlet_110",     label: "110V Duplex Outlet",      short: "110V Outlets",      color: "#2563eb", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="4.5"/><line x1="6.3" y1="2.5" x2="6.3" y2="13.5"/><line x1="9.7" y1="2.5" x2="9.7" y2="13.5"/></svg>' },
+        { type: "outlet_ext",     label: "Exterior Flush Outlet (WP)", short: "Exterior WP Outlets", color: "#0369a1", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="8.5" r="4"/><line x1="5.6" y1="3.5" x2="5.6" y2="13.5"/><line x1="8.4" y1="3.5" x2="8.4" y2="13.5"/><path d="M12 3.5l1.5 3.5-1.5 1-1.5-1z" fill="currentColor" stroke="none"/></svg>' },
+        { type: "special_outlet", label: "Floor / Island / Cab. Outlet", short: "Specialty Outlets", color: "#4f46e5", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><circle cx="8" cy="8" r="2.2" fill="currentColor"/></svg>' },
+        { type: "power_220",      label: "220V / G.D.O. Power",     short: "220V / G.D.O.",     color: "#7c3aed", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="4.5"/><line x1="5.5" y1="2.5" x2="5.5" y2="13.5"/><line x1="8" y1="2.5" x2="8" y2="13.5"/><line x1="10.5" y1="2.5" x2="10.5" y2="13.5"/></svg>' },
+      ],
+    },
+    {
+      id: "switches",
+      label: "Switches & Wiring",
+      color: "#059669",
+      items: [
+        { type: "switch",      label: "Single-Pole Smart Switch ($)", short: "Smart Switches",   color: "#059669", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10.5 5.2C10.5 4 9.4 3.5 8 3.5S5.5 4.2 5.5 5.4c0 2.5 5 1.8 5 4.8 0 1.3-1.1 2.2-2.5 2.2s-2.5-.8-2.5-2"/><line x1="8" y1="2" x2="8" y2="14"/></svg>' },
+        { type: "switch_3way", label: "3-Way Smart Switch ($3)",      short: "3-Way Switches",   color: "#10b981", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8.5 5.2C8.5 4.2 7.6 3.7 6.5 3.7S4.5 4.3 4.5 5.4c0 2.2 4 1.6 4 4.2 0 1.2-.9 2-2 2s-2-.7-2-1.8"/><line x1="6.5" y1="2.2" x2="6.5" y2="13.8"/><text x="11.5" y="13" font-size="7" font-family="monospace" fill="currentColor" stroke="none" font-weight="bold">3</text></svg>' },
+        { type: "wiring",      label: "Switch-Leg Wiring Arcs",       short: "Switch-Leg Wiring",color: "#dc2626", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 2"><path d="M2 12C5 4 11 4 14 12"/></svg>', isWiringToggle: true },
+      ],
+    },
+    {
+      id: "media",
+      label: "Media & Low-Voltage",
+      color: "#9333ea",
+      items: [
+        { type: "tv_media",  label: "TV & Surround Sound", short: "TV / Audio",  color: "#9333ea", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3.5" width="12" height="8" rx="1.2"/><line x1="5.5" y1="13.5" x2="10.5" y2="13.5"/></svg>' },
+        { type: "data_cat6", label: "CAT 6 Ethernet Data", short: "CAT 6 Drops", color: "#a855f7", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="8,3 13.5,12.5 2.5,12.5"/></svg>' },
+        { type: "doorbell",  label: "Doorbell Push-Button",short: "Doorbells",   color: "#c026d3", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3a3.5 3.5 0 0 1 3.5 3.5V10l1.2 1.5H3.3L4.5 10V6.5A3.5 3.5 0 0 1 8 3z"/><line x1="6.5" y1="13.5" x2="9.5" y2="13.5"/></svg>' },
+      ],
+    },
+    {
+      id: "specialty",
+      label: "HVAC & Specialty",
+      color: "#0d9488",
+      items: [
+        { type: "exhaust_fan", label: "Timer Exhaust Fan (EXH.)",       short: "Timer Exhaust Fans", color: "#0d9488", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5.2"/><path d="M8 8c0-2.5 2.5-3 3.5-1.5S10 10 8 8z" fill="currentColor"/></svg>' },
+        { type: "specialty",   label: "Heated Floors / Warmers / FP",   short: "Specialty Loads",    color: "#14b8a6", icon: '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11c0-2 2-2 2-4s-2-2-2-4M8 11c0-2 2-2 2-4s-2-2-2-4M12 11c0-2 2-2 2-4s-2-2-2-4"/></svg>' },
+      ],
+    },
+  ];
+
+  const ELEC_META_BY_TYPE = {};
+  ELEC_GROUPS.forEach((g) => g.items.forEach((it) => { ELEC_META_BY_TYPE[it.type] = { ...it, group: g.label }; }));
+
+  const ELEC_GENERAL_NOTES = [
+    { num: 1, text: "Electric for motorized shades @ all windows", action: "shades" },
+    { num: 2, text: "Smart switches compatible w/ Google Home",    types: ["switch", "switch_3way"] },
+    { num: 3, text: "Flush mount exterior outlets",                types: ["outlet_ext"] },
+    { num: 4, text: "All lighting dimmable",                       types: ["recessed_can", "ceiling_fan", "pendant", "sconce", "uc_light", "accent_light", "landscape"] },
+    { num: 5, text: "Timer exhaust fans",                          types: ["exhaust_fan"] },
+  ];
+
   // Application State
   const state = {
     sheet: "first",
@@ -275,6 +344,13 @@
       roof: false,
       hotspots: false,
     },
+    // Interactive Electrical Legend & Spotlight state
+    elecDrawerOpen: false,
+    elecNotesOpen: false,
+    elecSelectedTypes: new Set(), // empty = clean CAD default
+    elecHoverType: null,
+    elecRoomSpotlightId: null,
+    elecActiveNoteIdx: null,
     vb: { x: 65, y: 205, w: 2335, h: 1105 },
     activeRoomId: null,
     schedTab: "doors",
@@ -300,6 +376,8 @@
     elec2: document.getElementById("slot-elec2"),
   };
   const hotspotsSlot = document.getElementById("slot-hotspots");
+  const elecHighlightsSlot = document.getElementById("slot-elec-highlights");
+  const elecTooltipEl = document.getElementById("elec-tooltip");
   const measureSlot = document.getElementById("slot-measurements");
 
   // ========================================================================
@@ -355,6 +433,7 @@
     svg.setAttribute("viewBox", `${x.toFixed(2)} ${y.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)}`);
     updateZoomAndScaleHUD();
     renderMeasurements(); // keep measurement label scale crisp at every zoom
+    renderElecHighlights();
   }
 
   function fitBox(targetBox, animate = true) {
@@ -533,21 +612,27 @@
     document.getElementById("toggle-site").checked = ov.site;
     document.getElementById("toggle-roof").checked = ov.roof;
     document.getElementById("toggle-hotspots").checked = ov.hotspots;
-    document.getElementById("btn-quick-elec").classList.toggle("active", ov.elec);
+    document.getElementById("btn-quick-elec").classList.toggle("active", ov.elec || s === "elec1" || s === "elec2");
     document.getElementById("btn-quick-ghost").classList.toggle("active", ov.ghost);
 
     renderRoomHotspots();
+    buildElecLegend();
+    renderElecHighlights();
   }
 
   function setSheet(sheetKey, shouldFit = true) {
     if (!SHEET_META[sheetKey]) return;
     const prev = state.sheet;
     state.sheet = sheetKey;
+    if (sheetKey === "elec1" || sheetKey === "elec2") {
+      setElecDrawerOpen(true);
+    }
     if (state.activeRoomId) {
       const room = ROOMS.find((r) => r.id === state.activeRoomId);
       const nextFloor = sheetKey === "elec1" ? "first" : sheetKey === "elec2" ? "second" : sheetKey;
       if (room && room.floor !== nextFloor) closeRoomCard();
     }
+    state.elecRoomSpotlightId = null;
     syncLayers();
     // Keep camera position if switching between aligned 1st<->elec1 or 2nd<->elec2!
     const alignedPair =
@@ -560,6 +645,380 @@
     } else {
       updateZoomAndScaleHUD();
     }
+  }
+
+  // ========================================================================
+  // 4b. Interactive Electrical Legend, Canvas Spotlights & Symbol Tooltips
+  // ========================================================================
+  function getActiveElecFloor() {
+    return (state.sheet === "second" || state.sheet === "elec2") ? "second" : "first";
+  }
+
+  function isElecVisible() {
+    return state.overlays.elec || state.sheet === "elec1" || state.sheet === "elec2";
+  }
+
+  function getFloorElecItems(floor) {
+    const inv = window.ELECTRICAL_INVENTORY;
+    if (!inv || !inv[floor]) return [];
+    return inv[floor];
+  }
+
+  function getRoomNameById(roomId) {
+    if (roomId === "exterior") return "Exterior / Courtyard";
+    if (roomId === "hallway-2") return "2nd Floor Hallway";
+    const r = ROOMS.find((x) => x.id === roomId);
+    return r ? r.name : roomId;
+  }
+
+  function setElecDrawerOpen(open) {
+    state.elecDrawerOpen = open;
+    const btn = document.getElementById("btn-expand-elec");
+    const drawer = document.getElementById("elec-legend-drawer");
+    if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (drawer) drawer.classList.toggle("open", open);
+  }
+
+  function ensureElecActive() {
+    if (!isElecVisible()) {
+      state.overlays.elec = true;
+    }
+  }
+
+  function toggleElecType(typeKey) {
+    ensureElecActive();
+    state.elecRoomSpotlightId = null;
+    state.elecActiveNoteIdx = null;
+    if (state.elecSelectedTypes.has(typeKey)) {
+      state.elecSelectedTypes.delete(typeKey);
+    } else {
+      state.elecSelectedTypes.add(typeKey);
+    }
+    syncLayers();
+    if (state.activeRoomId) {
+      const r = ROOMS.find((x) => x.id === state.activeRoomId);
+      if (r) renderRoomElecSummary(r);
+    }
+  }
+
+  function buildElecLegend() {
+    const floor = getActiveElecFloor();
+    const items = getFloorElecItems(floor);
+    const counts = {};
+    items.forEach((it) => { counts[it.type] = (counts[it.type] || 0) + 1; });
+
+    const floorTag = document.getElementById("elec-legend-floor-tag");
+    if (floorTag) {
+      floorTag.textContent = floor === "second"
+        ? `2nd Floor · E1.2 (${items.length})`
+        : `1st Floor · E1.0 (${items.length})`;
+    }
+
+    const expandLabel = document.getElementById("elec-expand-label");
+    if (expandLabel) {
+      const activeCnt = state.elecSelectedTypes.size;
+      if (state.elecRoomSpotlightId) {
+        expandLabel.textContent = `Electrical Legend · ${getRoomNameById(state.elecRoomSpotlightId)}`;
+      } else if (activeCnt > 0) {
+        expandLabel.textContent = `Electrical Legend · ${activeCnt} highlighted`;
+      } else {
+        expandLabel.textContent = "Electrical Legend & Notes";
+      }
+    }
+
+    const container = document.getElementById("elec-legend-groups");
+    if (!container) return;
+
+    let html = "";
+    ELEC_GROUPS.forEach((group) => {
+      const present = group.items.filter((it) => it.isWiringToggle || (counts[it.type] || 0) > 0);
+      if (!present.length) return;
+      html += `<div class="elec-group"><div class="elec-group-head"><span>${group.label}</span></div><div class="elec-group-items">`;
+      present.forEach((it) => {
+        const active = state.elecSelectedTypes.has(it.type) ? " active" : "";
+        const countBadge = it.isWiringToggle ? "CIRCUITS" : String(counts[it.type] || 0);
+        html += `
+          <button type="button" class="elec-item-btn${active}" data-elec-type="${it.type}" style="--item-color:${it.color}">
+            <span class="elec-item-left">
+              <span class="elec-sym-icon">${it.icon}</span>
+              <span class="elec-item-label">${it.label}</span>
+            </span>
+            <span class="elec-item-count">${countBadge}</span>
+          </button>`;
+      });
+      html += `</div></div>`;
+    });
+    container.innerHTML = html;
+
+    container.querySelectorAll(".elec-item-btn").forEach((btn) => {
+      const typeKey = btn.dataset.elecType;
+      btn.addEventListener("click", () => toggleElecType(typeKey));
+      btn.addEventListener("mouseenter", () => {
+        state.elecHoverType = typeKey;
+        renderElecHighlights();
+      });
+      btn.addEventListener("mouseleave", () => {
+        if (state.elecHoverType === typeKey) {
+          state.elecHoverType = null;
+          renderElecHighlights();
+        }
+      });
+    });
+
+    // Build collapsible General Electrical Notes (5)
+    const notesList = document.getElementById("elec-notes-list");
+    if (notesList) {
+      notesList.innerHTML = ELEC_GENERAL_NOTES.map((n, idx) => {
+        const active = state.elecActiveNoteIdx === idx ? " active" : "";
+        return `
+          <button type="button" class="elec-note-btn${active}" data-note-idx="${idx}">
+            <span class="elec-note-num">${n.num}.</span>
+            <span>${n.text}</span>
+          </button>`;
+      }).join("");
+
+      notesList.querySelectorAll(".elec-note-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = Number(btn.dataset.noteIdx);
+          const note = ELEC_GENERAL_NOTES[idx];
+          if (state.elecActiveNoteIdx === idx) {
+            state.elecActiveNoteIdx = null;
+            state.elecSelectedTypes.clear();
+            if (note.action === "shades") state.overlays.hotspots = false;
+          } else {
+            state.elecActiveNoteIdx = idx;
+            state.elecRoomSpotlightId = null;
+            state.elecSelectedTypes.clear();
+            ensureElecActive();
+            if (note.action === "shades") {
+              state.overlays.hotspots = true;
+            } else if (note.types) {
+              note.types.forEach((t) => state.elecSelectedTypes.add(t));
+            }
+          }
+          syncLayers();
+        });
+      });
+    }
+  }
+
+  function showElecTooltip(item, clientX, clientY) {
+    const meta = ELEC_META_BY_TYPE[item.type] || { label: item.type, color: "#dc2626", group: "" };
+    document.getElementById("elec-tooltip-dot").style.background = meta.color;
+    document.getElementById("elec-tooltip-title").textContent = meta.label;
+    const noteText = (item.note && item.note !== meta.label) ? item.note : meta.group;
+    document.getElementById("elec-tooltip-note").textContent = noteText;
+    const floorLbl = item.floor === "second" ? "2nd Floor" : "1st Floor";
+    document.getElementById("elec-tooltip-room").textContent = `${getRoomNameById(item.room)} · ${floorLbl}`;
+
+    const rect = viewport.getBoundingClientRect();
+    let left = clientX - rect.left + 14;
+    let top = clientY - rect.top - 12;
+    elecTooltipEl.classList.add("visible");
+    const tw = elecTooltipEl.offsetWidth || 200;
+    const th = elecTooltipEl.offsetHeight || 72;
+    if (left + tw > rect.width - 12) left = clientX - rect.left - tw - 14;
+    if (top + th > rect.height - 12) top = rect.height - th - 12;
+    if (top < 12) top = 12;
+    elecTooltipEl.style.left = `${Math.max(12, left)}px`;
+    elecTooltipEl.style.top = `${top}px`;
+  }
+
+  function hideElecTooltip() {
+    elecTooltipEl.classList.remove("visible");
+  }
+
+  function renderElecHighlights() {
+    elecHighlightsSlot.innerHTML = "";
+    const activeElecSlot = getActiveElecFloor() === "second" ? slots.elec2 : slots.elec1;
+    slots.elec1.classList.remove("elec-dimmed", "spotlight-wiring");
+    slots.elec2.classList.remove("elec-dimmed", "spotlight-wiring");
+
+    const floor = getActiveElecFloor();
+    const allItems = getFloorElecItems(floor);
+    const hasHover = Boolean(state.elecHoverType);
+    const hasSelected = state.elecSelectedTypes.size > 0;
+    const hasRoomSpot = Boolean(state.elecRoomSpotlightId);
+    const anySpotlight = hasHover || hasSelected || hasRoomSpot;
+
+    if (!isElecVisible() && !anySpotlight) {
+      hideElecTooltip();
+      return;
+    }
+
+    // Highlight switch-leg wiring arcs if 'wiring' is toggled or hovered
+    const wiringSpot = state.elecHoverType === "wiring" || state.elecSelectedTypes.has("wiring");
+    if (wiringSpot) {
+      activeElecSlot.classList.add("spotlight-wiring");
+    } else if (anySpotlight) {
+      activeElecSlot.classList.add("elec-dimmed");
+    }
+
+    const rect = viewport.getBoundingClientRect();
+    const unitPerPx = rect.width ? state.vb.w / rect.width : 1.8;
+    const baseR = Math.max(7.5, Math.min(18, 9.5 * unitPerPx));
+    const dotR = Math.max(2.6, Math.min(6, 3.2 * unitPerPx));
+
+    // Determine which symbols to render visually vs as subtle interactive hit targets
+    allItems.forEach((item) => {
+      const meta = ELEC_META_BY_TYPE[item.type] || { color: "#dc2626", label: item.type };
+      let highlighted = false;
+      if (hasHover) {
+        highlighted = item.type === state.elecHoverType;
+      } else if (hasRoomSpot) {
+        highlighted = item.room === state.elecRoomSpotlightId;
+      } else if (hasSelected) {
+        highlighted = state.elecSelectedTypes.has(item.type);
+      }
+
+      // In clean CAD default (no spotlight active), still mount transparent hover/click hit targets so tooltips work!
+      if (!highlighted && anySpotlight) return;
+
+      const g = document.createElementNS(SVG_NS, "g");
+      g.setAttribute("class", "elec-marker-group");
+
+      const r = item.type === "ceiling_fan" ? baseR * 1.65 : baseR;
+      if (highlighted) {
+        const halo = document.createElementNS(SVG_NS, "circle");
+        halo.setAttribute("cx", item.x);
+        halo.setAttribute("cy", item.y);
+        halo.setAttribute("r", r.toFixed(1));
+        halo.setAttribute("fill", meta.color);
+        halo.setAttribute("stroke", meta.color);
+        halo.setAttribute("class", "elec-marker-halo");
+        g.appendChild(halo);
+
+        const dot = document.createElementNS(SVG_NS, "circle");
+        dot.setAttribute("cx", item.x);
+        dot.setAttribute("cy", item.y);
+        dot.setAttribute("r", dotR.toFixed(1));
+        dot.setAttribute("fill", meta.color);
+        dot.setAttribute("class", "elec-marker-dot");
+        g.appendChild(dot);
+      } else {
+        const hit = document.createElementNS(SVG_NS, "circle");
+        hit.setAttribute("cx", item.x);
+        hit.setAttribute("cy", item.y);
+        hit.setAttribute("r", Math.max(8, r).toFixed(1));
+        hit.setAttribute("class", "elec-marker-hit");
+        g.appendChild(hit);
+      }
+
+      g.addEventListener("pointerenter", (e) => showElecTooltip(item, e.clientX, e.clientY));
+      g.addEventListener("pointermove", (e) => showElecTooltip(item, e.clientX, e.clientY));
+      g.addEventListener("pointerleave", hideElecTooltip);
+      g.addEventListener("click", (e) => {
+        if (state.measuring || wasDragging) return;
+        e.stopPropagation();
+        showElecTooltip(item, e.clientX, e.clientY);
+      });
+
+      elecHighlightsSlot.appendChild(g);
+    });
+  }
+
+  function renderRoomElecSummary(room) {
+    const sec = document.getElementById("room-elec-section");
+    if (!sec) return;
+    if (room.floor !== "first" && room.floor !== "second") {
+      sec.style.display = "none";
+      return;
+    }
+    sec.style.display = "block";
+
+    const items = getFloorElecItems(room.floor).filter((it) => it.room === room.id);
+    document.getElementById("room-elec-total").textContent = `${items.length} item${items.length === 1 ? "" : "s"}`;
+
+    // Aggregate counts by symbol type preserving ELEC_GROUPS order
+    const counts = {};
+    items.forEach((it) => { counts[it.type] = (counts[it.type] || 0) + 1; });
+    const chipsEl = document.getElementById("room-elec-chips");
+    const chipHtml = [];
+    ELEC_GROUPS.forEach((g) => {
+      g.items.forEach((meta) => {
+        const c = counts[meta.type] || 0;
+        if (c > 0) {
+          chipHtml.push(`
+            <button type="button" class="room-elec-chip" data-chip-type="${meta.type}" style="--chip-color:${meta.color}" title="Click to spotlight ${meta.label} across floor">
+              <span class="room-elec-chip-dot"></span>
+              <span><strong>${c}×</strong> ${meta.short}</span>
+            </button>`);
+        }
+      });
+    });
+    chipsEl.innerHTML = chipHtml.length
+      ? chipHtml.join("")
+      : `<span style="font-size:11px;color:var(--ui-text-muted);">No dedicated symbols inside room bounds.</span>`;
+
+    chipsEl.querySelectorAll(".room-elec-chip").forEach((chip) => {
+      const t = chip.dataset.chipType;
+      chip.addEventListener("mouseenter", () => {
+        state.elecHoverType = t;
+        renderElecHighlights();
+      });
+      chip.addEventListener("mouseleave", () => {
+        if (state.elecHoverType === t) {
+          state.elecHoverType = null;
+          renderElecHighlights();
+        }
+      });
+      chip.addEventListener("click", () => {
+        ensureElecActive();
+        setElecDrawerOpen(true);
+        state.elecRoomSpotlightId = null;
+        state.elecSelectedTypes = new Set([t]);
+        syncLayers();
+        renderRoomElecSummary(room);
+      });
+    });
+
+    // Collect notable room-specific electrical callouts (unique specialty notes)
+    const genericNotes = new Set([
+      "Recessed Can Fixture (Dimmable)",
+      "110V Duplex Receptacle",
+      "Single-Pole Smart Switch (Google Home)",
+      "3-Way Smart Switch (Google Home)",
+      "Single-Pole Smart Switch (Multi-Gang)",
+      "3-Way Smart Switch (Multi-Gang)",
+      "Ceiling Fan (Dimmable / Smart Switch)",
+    ]);
+    const specialNotes = [];
+    const seen = new Set();
+    items.forEach((it) => {
+      if (it.note && !genericNotes.has(it.note) && !seen.has(it.note)) {
+        seen.add(it.note);
+        specialNotes.push(it.note);
+      }
+    });
+    // General house-wide electrical standards applicable to habitable rooms
+    if (room.id !== "garage" && room.id !== "carport") {
+      specialNotes.push("All lighting dimmable · Motorized shade prewire @ windows");
+    }
+    const notesEl = document.getElementById("room-elec-notes");
+    notesEl.innerHTML = specialNotes.slice(0, 5).map((n) => `<li>${n}</li>`).join("");
+
+    // Spotlight Room Electrical button state
+    const spotBtn = document.getElementById("btn-room-elec-spotlight");
+    const spotLbl = document.getElementById("btn-room-elec-label");
+    const isSpot = state.elecRoomSpotlightId === room.id;
+    spotBtn.classList.toggle("active", isSpot);
+    spotLbl.textContent = isSpot ? "Clear Room Electrical Spotlight" : "Spotlight Room Electrical";
+  }
+
+  function toggleElecRoomSpotlight() {
+    if (!state.activeRoomId) return;
+    const room = ROOMS.find((r) => r.id === state.activeRoomId);
+    if (!room) return;
+    if (state.elecRoomSpotlightId === room.id) {
+      state.elecRoomSpotlightId = null;
+    } else {
+      ensureElecActive();
+      state.elecSelectedTypes.clear();
+      state.elecActiveNoteIdx = null;
+      state.elecRoomSpotlightId = room.id;
+    }
+    syncLayers();
+    renderRoomElecSummary(room);
   }
 
   // ========================================================================
@@ -611,8 +1070,13 @@
       state.sheet;
     if (curFloor !== room.floor) {
       state.sheet = room.floor;
+      state.elecRoomSpotlightId = null;
       syncLayers();
     } else {
+      if (state.elecRoomSpotlightId && state.elecRoomSpotlightId !== roomId) {
+        state.elecRoomSpotlightId = roomId;
+        renderElecHighlights();
+      }
       renderRoomHotspots();
     }
 
@@ -627,7 +1091,7 @@
       }, true);
     }
 
-    // Show Room Inspector Card
+    // Show Room Inspector Card with always-visible Electrical Plan summary
     const card = document.getElementById("room-card");
     document.getElementById("room-card-title").textContent = room.name;
     document.getElementById("room-card-badge").textContent = `${room.ceiling} · ${SHEET_META[room.floor].code}`;
@@ -635,6 +1099,7 @@
     document.getElementById("room-card-tags").innerHTML = room.tags
       .map((t) => `<span class="room-tag">${t}</span>`)
       .join("");
+    renderRoomElecSummary(room);
     card.classList.add("visible");
 
     document.querySelectorAll(".room-item").forEach((el) => {
@@ -644,6 +1109,11 @@
 
   function closeRoomCard() {
     state.activeRoomId = null;
+    if (state.elecRoomSpotlightId) {
+      state.elecRoomSpotlightId = null;
+      renderElecHighlights();
+      buildElecLegend();
+    }
     document.getElementById("room-card").classList.remove("visible");
     document.querySelectorAll(".room-item").forEach((el) => el.classList.remove("active"));
     renderRoomHotspots();
@@ -1088,12 +1558,41 @@ ${visibleSlots}
     // Overlay Toggles & Opacity Sliders
     document.getElementById("toggle-elec").addEventListener("change", (e) => {
       state.overlays.elec = e.target.checked;
+      if (state.overlays.elec) setElecDrawerOpen(true);
       syncLayers();
     });
     document.getElementById("opacity-elec").addEventListener("input", (e) => {
       state.overlays.elecOpacity = Number(e.target.value) / 100;
       document.getElementById("opacity-elec-val").textContent = `${e.target.value}%`;
       syncLayers();
+    });
+
+    // Expandable Electrical Legend & General Notes Controls
+    document.getElementById("btn-expand-elec").addEventListener("click", () => {
+      setElecDrawerOpen(!state.elecDrawerOpen);
+    });
+    document.getElementById("btn-elec-all").addEventListener("click", () => {
+      ensureElecActive();
+      state.elecRoomSpotlightId = null;
+      state.elecActiveNoteIdx = null;
+      const items = getFloorElecItems(getActiveElecFloor());
+      state.elecSelectedTypes = new Set(items.map((it) => it.type));
+      syncLayers();
+    });
+    document.getElementById("btn-elec-clear").addEventListener("click", () => {
+      state.elecSelectedTypes.clear();
+      state.elecRoomSpotlightId = null;
+      state.elecActiveNoteIdx = null;
+      syncLayers();
+      if (state.activeRoomId) {
+        const r = ROOMS.find((x) => x.id === state.activeRoomId);
+        if (r) renderRoomElecSummary(r);
+      }
+    });
+    document.getElementById("btn-elec-notes-toggle").addEventListener("click", () => {
+      state.elecNotesOpen = !state.elecNotesOpen;
+      document.getElementById("btn-elec-notes-toggle").setAttribute("aria-expanded", state.elecNotesOpen ? "true" : "false");
+      document.getElementById("elec-notes-list").classList.toggle("open", state.elecNotesOpen);
     });
 
     document.getElementById("toggle-ghost").addEventListener("change", (e) => {
@@ -1137,9 +1636,10 @@ ${visibleSlots}
       });
     });
 
-    // Room Directory Search & Inspector Close
+    // Room Directory Search, Inspector Close & Room Electrical Spotlight
     document.getElementById("room-search").addEventListener("input", (e) => buildRoomDirectory(e.target.value));
     document.getElementById("room-card-close").addEventListener("click", closeRoomCard);
+    document.getElementById("btn-room-elec-spotlight").addEventListener("click", toggleElecRoomSpotlight);
 
     // Schedules Tabs & Search
     document.querySelectorAll(".sched-tab").forEach((btn) => {
@@ -1158,6 +1658,7 @@ ${visibleSlots}
     document.getElementById("btn-measure").addEventListener("click", () => setMeasuring(!state.measuring));
     document.getElementById("btn-quick-elec").addEventListener("click", () => {
       state.overlays.elec = !state.overlays.elec;
+      if (state.overlays.elec) setElecDrawerOpen(true);
       syncLayers();
     });
     document.getElementById("btn-quick-ghost").addEventListener("click", () => {

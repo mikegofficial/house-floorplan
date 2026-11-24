@@ -1229,6 +1229,463 @@ html, body {
   pointer-events: none;
 }
 
+/* ==========================================================================
+   Expandable Electrical Legend, Canvas Spotlights, Tooltip & Room Summary
+   ========================================================================== */
+
+.elec-expand-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface);
+  color: var(--ui-text-secondary);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.elec-expand-btn:hover {
+  background: var(--ui-surface-hover);
+  color: var(--ui-text);
+  border-color: var(--ui-border-strong);
+}
+
+.elec-expand-chevron {
+  transition: transform 160ms ease;
+}
+
+.elec-expand-btn[aria-expanded="true"] .elec-expand-chevron {
+  transform: rotate(180deg);
+}
+
+.elec-legend-drawer {
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--ui-border);
+}
+
+.elec-legend-drawer.open {
+  display: block;
+}
+
+.elec-legend-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.elec-legend-floor-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ui-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.elec-legend-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.elec-mini-link {
+  height: 22px;
+  padding: 0 7px;
+  border: 1px solid var(--ui-border);
+  border-radius: 4px;
+  background: var(--ui-surface);
+  color: var(--ui-text-secondary);
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.elec-mini-link:hover {
+  background: var(--ui-surface-hover);
+  color: var(--ui-text);
+}
+
+.elec-group {
+  margin-bottom: 9px;
+}
+
+.elec-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ui-text-muted);
+  margin-bottom: 4px;
+  padding: 0 2px;
+}
+
+.elec-group-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.elec-item-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  width: 100%;
+  padding: 5px 7px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: 11.5px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 100ms ease, border-color 100ms ease;
+}
+
+.elec-item-btn:hover {
+  background: var(--ui-surface-hover);
+}
+
+.elec-item-btn.active {
+  background: var(--ui-surface);
+  border-color: var(--item-color, var(--ui-accent));
+  box-shadow: inset 3px 0 0 var(--item-color, var(--ui-accent));
+  font-weight: 550;
+}
+
+.elec-item-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.elec-sym-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--item-color, #64748b) 14%, transparent);
+  color: var(--item-color, var(--ui-text));
+}
+
+.elec-item-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.elec-item-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 99px;
+  background: var(--ui-surface-hover);
+  color: var(--ui-text-secondary);
+  flex-shrink: 0;
+}
+
+.elec-item-btn.active .elec-item-count {
+  background: var(--item-color, var(--ui-accent));
+  color: #ffffff;
+}
+
+/* Collapsible General Electrical Notes inside Legend */
+.elec-notes-box {
+  margin-top: 8px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface);
+  overflow: hidden;
+}
+
+.elec-notes-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.elec-notes-toggle:hover {
+  background: var(--ui-surface-hover);
+}
+
+.elec-notes-list {
+  display: none;
+  border-top: 1px solid var(--ui-border);
+  padding: 4px;
+}
+
+.elec-notes-list.open {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.elec-note-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  padding: 5px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ui-text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.elec-note-btn:hover {
+  background: var(--ui-surface-hover);
+  color: var(--ui-text);
+}
+
+.elec-note-btn.active {
+  background: var(--ui-accent-soft);
+  border-color: var(--ui-accent);
+  color: var(--ui-text);
+}
+
+.elec-note-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ui-accent);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Electrical Layer Dimming when Spotlight Active */
+.plan-layer.elec-dimmed {
+  opacity: 0.28 !important;
+}
+
+.plan-layer.hide-wiring .s-elec {
+  stroke: none !important;
+}
+
+.plan-layer.spotlight-wiring .s-elec {
+  stroke: #dc2626 !important;
+  stroke-opacity: 1 !important;
+  stroke-width: 1.25 !important;
+}
+
+/* Canvas Electrical Symbol Spotlight Halos */
+.elec-marker-group {
+  cursor: pointer;
+}
+
+.elec-marker-hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.elec-marker-halo {
+  fill-opacity: 0.22;
+  stroke-width: 1.8;
+  vector-effect: non-scaling-stroke;
+  transition: fill-opacity 120ms ease;
+}
+
+.elec-marker-group:hover .elec-marker-halo {
+  fill-opacity: 0.42;
+}
+
+.elec-marker-dot {
+  stroke: #ffffff;
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Floating Interactive Electrical Symbol Tooltip */
+.elec-tooltip {
+  position: absolute;
+  display: none;
+  max-width: 240px;
+  padding: 8px 10px;
+  border: 1px solid var(--ui-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow-md);
+  z-index: 25;
+  pointer-events: none;
+}
+
+.elec-tooltip.visible {
+  display: block;
+}
+
+.elec-tooltip-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ui-text);
+}
+
+.elec-tooltip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.elec-tooltip-note {
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--ui-text-secondary);
+}
+
+.elec-tooltip-room {
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ui-text-muted);
+}
+
+/* Room Card — Always-Visible Electrical Plan Summary Section */
+.room-card {
+  max-width: 328px;
+  max-height: calc(100% - 96px);
+  overflow-y: auto;
+}
+
+.room-elec-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ui-border);
+}
+
+.room-elec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.room-elec-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ui-text-muted);
+}
+
+.room-elec-total {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ui-text-muted);
+}
+
+.room-elec-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.room-elec-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--chip-color, #64748b) 35%, var(--ui-border));
+  background: color-mix(in srgb, var(--chip-color, #64748b) 10%, var(--ui-surface));
+  font-size: 10.5px;
+  color: var(--ui-text);
+  cursor: pointer;
+  transition: background 100ms ease, border-color 100ms ease;
+}
+
+.room-elec-chip:hover {
+  background: color-mix(in srgb, var(--chip-color, #64748b) 20%, var(--ui-surface));
+  border-color: var(--chip-color, var(--ui-accent));
+}
+
+.room-elec-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--chip-color, #64748b);
+  flex-shrink: 0;
+}
+
+.room-elec-notes {
+  margin: 6px 0 0;
+  padding-left: 14px;
+  font-size: 11px;
+  color: var(--ui-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.room-elec-spotlight-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 29px;
+  margin-top: 8px;
+  border: 1px solid var(--ui-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface-subtle);
+  color: var(--ui-text);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.room-elec-spotlight-btn:hover {
+  background: var(--ui-surface-hover);
+}
+
+.room-elec-spotlight-btn.active {
+  background: var(--ui-accent);
+  color: var(--ui-accent-text);
+  border-color: var(--ui-accent);
+}
+
 /* Responsive adjustments */
 @media (max-width: 960px) {
   .sidebar {
@@ -1251,6 +1708,7 @@ html, body {
   .bottom-dock,
   .room-card,
   .measure-banner,
+  .elec-tooltip,
   .coord-badge {
     display: none !important;
   }

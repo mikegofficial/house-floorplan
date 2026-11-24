@@ -89,7 +89,7 @@
           <section id="panel-layers" class="sidebar-panel active">
             <div class="section-label">Aligned Vector Overlays</div>
 
-            <div class="layer-card">
+            <div class="layer-card" id="elec-layer-card">
               <label class="layer-row">
                 <div class="layer-info">
                   <span class="layer-dot" style="background: var(--v-elec);"></span>
@@ -107,6 +107,31 @@
                 <span>Opacity</span>
                 <input type="range" id="opacity-elec" min="20" max="100" value="90" />
                 <span id="opacity-elec-val" style="font-family:var(--font-mono);min-width:30px;text-align:right;">90%</span>
+              </div>
+              <button id="btn-expand-elec" class="elec-expand-btn" type="button" aria-expanded="false" aria-controls="elec-legend-drawer">
+                <span id="elec-expand-label">Electrical Legend &amp; Notes</span>
+                <svg class="elec-expand-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              <div id="elec-legend-drawer" class="elec-legend-drawer">
+                <div class="elec-legend-toolbar">
+                  <span id="elec-legend-floor-tag" class="elec-legend-floor-tag">1st Floor · E1.0</span>
+                  <div class="elec-legend-actions">
+                    <button id="btn-elec-all" class="elec-mini-link" type="button">Highlight All</button>
+                    <button id="btn-elec-clear" class="elec-mini-link" type="button">Clear</button>
+                  </div>
+                </div>
+                <div id="elec-legend-groups"></div>
+                <div class="elec-notes-box">
+                  <button id="btn-elec-notes-toggle" class="elec-notes-toggle" type="button" aria-expanded="false">
+                    <span>General Electrical Notes (5)</span>
+                    <svg class="elec-expand-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+                  <div id="elec-notes-list" class="elec-notes-list"></div>
+                </div>
               </div>
             </div>
 
@@ -303,9 +328,20 @@
             <g id="slot-elec1" class="plan-layer"></g>
             <g id="slot-elec2" class="plan-layer"></g>
             <g id="slot-hotspots"></g>
+            <g id="slot-elec-highlights"></g>
             <g id="slot-measurements"></g>
           </g>
         </svg>
+
+        <!-- Floating Interactive Electrical Symbol Tooltip -->
+        <div id="elec-tooltip" class="elec-tooltip" role="tooltip">
+          <div class="elec-tooltip-head">
+            <span id="elec-tooltip-dot" class="elec-tooltip-dot"></span>
+            <span id="elec-tooltip-title"></span>
+          </div>
+          <div id="elec-tooltip-note" class="elec-tooltip-note"></div>
+          <div id="elec-tooltip-room" class="elec-tooltip-room"></div>
+        </div>
 
         <!-- Active Room Inspector Card -->
         <div id="room-card" class="room-card" role="dialog" aria-label="Room Details">
@@ -323,6 +359,21 @@
           </div>
           <div id="room-card-body" class="room-card-body"></div>
           <div id="room-card-tags" class="room-card-tags"></div>
+          <div id="room-elec-section" class="room-elec-section">
+            <div class="room-elec-head">
+              <span class="room-elec-title">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+                Electrical Plan
+              </span>
+              <span id="room-elec-total" class="room-elec-total"></span>
+            </div>
+            <div id="room-elec-chips" class="room-elec-chips"></div>
+            <ul id="room-elec-notes" class="room-elec-notes"></ul>
+            <button id="btn-room-elec-spotlight" class="room-elec-spotlight-btn" type="button">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+              <span id="btn-room-elec-label">Spotlight Room Electrical</span>
+            </button>
+          </div>
         </div>
 
         <!-- Measurement Active Banner -->
@@ -407,6 +458,7 @@
 
   <!-- Pure Vector Layer Data Bundle (works over file:// and http:// with zero CORS issues) -->
   <script src="layers/plan-data.js"></script>
+  <script src="layers/elec-inventory.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
