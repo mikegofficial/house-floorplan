@@ -54,13 +54,15 @@ SCHEDULE_META = {
     "F":   {"wFt": 5.0,   "hFt": 3.0,   "sillFt": 6.0, "headFt": 9.0,  "family": "FG",           "category": "fixed",       "label": "Bath Clerestory Fixed Window"},
     "G":   {"wFt": 3.0,   "hFt": 5.0,   "sillFt": 3.0, "headFt": 8.0,  "family": "CSMT",         "category": "operable",    "label": "Operable Casement Window"},
     "H":   {"wFt": 5.5,   "hFt": 2.0,   "sillFt": 6.0, "headFt": 8.0,  "family": "FG",           "category": "fixed",       "label": "High Clerestory Fixed Window"},
-    "I":   {"wFt": 1.5,   "hFt": 6.0,   "sillFt": 2.5, "headFt": 8.5,  "family": "FG",           "category": "fixed",       "label": "Vertical Slot Fixed Window"},
+    # I: A3.0-1 dims 9'-0" head (sill 3') for the paired north slots; brick-tower slots are 8'-0" head (overridden per segment)
+    "I":   {"wFt": 1.5,   "hFt": 6.0,   "sillFt": 3.0, "headFt": 9.0,  "family": "FG",           "category": "fixed",       "label": "Vertical Slot Fixed Window"},
     "J":   {"wFt": 3.0,   "hFt": 9.0,   "sillFt": 3.0, "headFt": 12.0, "family": "FG",           "category": "fixed",       "label": "Tall Stairwell Fixed Window"},
     "K":   {"wFt": 4.0,   "hFt": 3.0,   "sillFt": 6.0, "headFt": 9.0,  "family": "FG",           "category": "fixed",       "label": "Upper Clerestory Fixed Window"},
     "L":   {"wFt": 10.0,  "hFt": 3.0,   "sillFt": 6.0, "headFt": 9.0,  "family": "FG",           "category": "fixed",       "label": "Wide Panoramic Clerestory"},
     "M":   {"wFt": 3.0,   "hFt": 9.0,   "sillFt": 3.0, "headFt": 12.0, "family": "CSMT",         "category": "operable",    "label": "Tall Vaulted Casement Window"},
     "N":   {"wFt": 9.0,   "hFt": 6.0,   "sillFt": 3.0, "headFt": 9.0,  "family": "3-PNL SLIDER", "category": "operable",    "label": "3-Panel Horizontal Slider"},
-    "O":   {"wFt": 9.0,   "hFt": 2.0,   "sillFt": 7.0, "headFt": 9.0,  "family": "AWN",          "category": "operable",    "label": "Clerestory Awning Window"},
+    # O: A2.3 schedule family = FG (A3.1-4 draws an awning swing mark — confirm with architect); A3.1-4 head 8'-0"
+    "O":   {"wFt": 9.0,   "hFt": 2.0,   "sillFt": 6.0, "headFt": 8.0,  "family": "FG",           "category": "fixed",       "label": "Clerestory Fixed Window"},
     "P":   {"wFt": 7.17,  "hFt": 3.0,   "sillFt": 5.0, "headFt": 8.0,  "family": "FG",           "category": "fixed",       "label": "Primary Bath Picture Window"},
     "Q":   {"wFt": 3.0,   "hFt": 3.0,   "sillFt": 5.0, "headFt": 8.0,  "family": "CSMT",         "category": "operable",    "label": "Operable Casement Window"},
     "R":   {"wFt": 5.0,   "hFt": 3.0,   "sillFt": 5.0, "headFt": 8.0,  "family": "FG",           "category": "fixed",       "label": "Vanity Clerestory Fixed Window"},
@@ -127,7 +129,12 @@ def curved_arc_chord(cx, cy, r, deg1, deg2):
 def build_openings():
     raw = []
 
-    def add_seg(floor, room, clip_id, mark, x1, y1, x2, y2, nx, ny, eave_ft=10.5, overhang_ft=2.0):
+    # Floor elevations relative to Main First Floor 0'-0" (Sheets A3.0 / A3.1 level datums)
+    FLOOR_BASE_FT = {"first": 0.0, "second": 11.6875}
+    ADU_BASE_FT = -1.5  # ADU FIRST FLOOR -1'-6"
+
+    def add_seg(floor, room, clip_id, mark, x1, y1, x2, y2, nx, ny, eave_ft=10.5, overhang_ft=2.0,
+                sill_ft=None, head_ft=None, base_elev_ft=None):
         meta = SCHEDULE_META[mark]
         az = screen_normal_to_azimuth(nx, ny)
         raw.append({
@@ -143,8 +150,9 @@ def build_openings():
             "size": SIZE_STR[mark],
             "wFt": meta["wFt"],
             "hFt": meta["hFt"],
-            "sillFt": meta["sillFt"],
-            "headFt": meta["headFt"],
+            "sillFt": meta["sillFt"] if sill_ft is None else sill_ft,
+            "headFt": meta["headFt"] if head_ft is None else head_ft,
+            "baseElevFt": FLOOR_BASE_FT[floor] if base_elev_ft is None else base_elev_ft,
             "eaveFt": eave_ft,
             "overhangFt": overhang_ft,
             "x1": round(x1, 1),
@@ -162,23 +170,27 @@ def build_openings():
     # =========================================================================
     # FIRST FLOOR WINDOWS & GLAZED DOORS (Master A2.0 coordinates)
     # =========================================================================
+    # ADU openings sit on ADU FIRST FLOOR (-1'-6"); sill/head/eave measured from the ADU floor.
+    # ADU 2:12 shed: low eave on the South (~10.9' above ADU floor, A3.1-3), rising to the North (~15.8').
     # ADU Bedroom (South -X & West -Y)
-    add_seg("first", "adu-bdrm", "clip-adu-bdrm", "B", 173.8, 394.8, 173.8, 421.8, -1, 0, eave_ft=10.5, overhang_ft=2.0)
-    add_seg("first", "adu-bdrm", "clip-adu-bdrm", "B", 173.8, 541.8, 173.8, 568.8, -1, 0, eave_ft=10.5, overhang_ft=2.0)
-    add_seg("first", "adu-bdrm", "clip-adu-bdrm", "G", 200.4, 375.4, 254.4, 375.4, 0, -1, eave_ft=10.5, overhang_ft=2.0)
-    add_seg("first", "adu-bdrm", "clip-adu-bdrm", "G", 316.3, 375.4, 370.3, 375.4, 0, -1, eave_ft=10.5, overhang_ft=2.0)
+    add_seg("first", "adu-bdrm", "clip-adu-bdrm", "B", 173.8, 394.8, 173.8, 421.8, -1, 0, eave_ft=10.9, overhang_ft=2.0, base_elev_ft=ADU_BASE_FT)
+    add_seg("first", "adu-bdrm", "clip-adu-bdrm", "B", 173.8, 541.8, 173.8, 568.8, -1, 0, eave_ft=10.9, overhang_ft=2.0, base_elev_ft=ADU_BASE_FT)
+    add_seg("first", "adu-bdrm", "clip-adu-bdrm", "G", 200.4, 375.4, 254.4, 375.4, 0, -1, eave_ft=12.0, overhang_ft=2.0, base_elev_ft=ADU_BASE_FT)
+    add_seg("first", "adu-bdrm", "clip-adu-bdrm", "G", 316.3, 375.4, 370.3, 375.4, 0, -1, eave_ft=12.0, overhang_ft=2.0, base_elev_ft=ADU_BASE_FT)
 
     # ADU Bath (West -Y)
-    add_seg("first", "adu-bath", "clip-adu-bath", "H", 395.4, 375.4, 494.4, 375.4, 0, -1, eave_ft=10.5, overhang_ft=2.0)
+    add_seg("first", "adu-bath", "clip-adu-bath", "H", 395.4, 375.4, 494.4, 375.4, 0, -1, eave_ft=12.0, overhang_ft=2.0, base_elev_ft=ADU_BASE_FT)
 
     # ADU Living (South -X Door 301, East +Y Glass Blocks V & Entry Door 300)
-    add_seg("first", "adu-living", "clip-adu-living", "301", 176.5, 673.8, 176.5, 829.8, -1, 0, eave_ft=10.5, overhang_ft=2.0)
-    add_seg("first", "adu-living", "clip-adu-living", "V",   231.2, 959.0, 255.2, 959.0, 0, 1,  eave_ft=10.5, overhang_ft=2.0)
-    add_seg("first", "adu-living", "clip-adu-living", "V",   279.2, 959.0, 303.2, 959.0, 0, 1,  eave_ft=10.5, overhang_ft=2.0)
-    add_seg("first", "adu-living", "clip-adu-living", "300", 433.7, 923.0, 487.7, 923.0, 0, 1,  eave_ft=10.5, overhang_ft=4.5)
+    add_seg("first", "adu-living", "clip-adu-living", "301", 176.5, 673.8, 176.5, 829.8, -1, 0, eave_ft=10.9, overhang_ft=2.0, base_elev_ft=ADU_BASE_FT)
+    add_seg("first", "adu-living", "clip-adu-living", "V",   231.2, 959.0, 255.2, 959.0, 0, 1,  eave_ft=12.0, overhang_ft=2.0, base_elev_ft=ADU_BASE_FT)
+    add_seg("first", "adu-living", "clip-adu-living", "V",   279.2, 959.0, 303.2, 959.0, 0, 1,  eave_ft=12.0, overhang_ft=2.0, base_elev_ft=ADU_BASE_FT)
+    add_seg("first", "adu-living", "clip-adu-living", "300", 433.7, 923.0, 487.7, 923.0, 0, 1,  eave_ft=12.0, overhang_ft=4.5, base_elev_ft=ADU_BASE_FT)
 
     # Mud Room (West -Y Door 111, East +Y Glass Block U shared w/ Screened Patio)
-    add_seg("first", "mud-room", "clip-mud-room", "111", 1327.6, 530.0, 1372.6, 530.0, 0, -1, eave_ft=10.5, overhang_ft=2.0)
+    # A3.1-4: 2nd-floor wall is flush above Door 111 & Window E — the only eave is the main roof's
+    # 2'-0" low (west) overhang at ~T.O.P. 20'-9 3/8" (no first-floor eave).
+    add_seg("first", "mud-room", "clip-mud-room", "111", 1327.6, 530.0, 1372.6, 530.0, 0, -1, eave_ft=20.8, overhang_ft=2.0)
     add_seg("first", "mud-room", "clip-mud-room", "U",   1160.3, 686.5, 1376.3, 686.5, 0, 1,  eave_ft=10.0, overhang_ft=13.0)
 
     # Dining Nook (4x Curved D along arc center (1504.6, 948.4) r=125.5, East C, Patio Door 109)
@@ -190,7 +202,7 @@ def build_openings():
 
     # Living Room (East +Y 12'x10' Courtyard Glass Door 108, West -Y Window E)
     add_seg("first", "living", "clip-main-open", "108", 1676.7, 917.7, 1892.7, 917.7, 0, 1,  eave_ft=11.0, overhang_ft=2.0)
-    add_seg("first", "living", "clip-main-open", "E",   1681.6, 529.5, 1735.6, 529.5, 0, -1, eave_ft=10.5, overhang_ft=2.0)
+    add_seg("first", "living", "clip-main-open", "E",   1681.6, 529.5, 1735.6, 529.5, 0, -1, eave_ft=20.8, overhang_ft=2.0)
 
     # Bath 1 (South -X into side setback Window F)
     add_seg("first", "bath-1", "clip-bath-1", "F", 1805.5, 435.1, 1805.5, 525.1, -1, 0, eave_ft=9.5, overhang_ft=2.0)
@@ -214,12 +226,13 @@ def build_openings():
     # =========================================================================
     # SECOND FLOOR WINDOWS & SKYLIGHT (Master A2.0 coordinates)
     # =========================================================================
+    # East facade is the HIGH side of the 4:12 shed: soffit ~28'-2" above 1st Fl. (A3.0-2) = ~16.5' above 2nd Fl.
     # Primary Bedroom (South -X Slider N, East +Y Tall Casements M x 2)
     add_seg("second", "primary-bdrm", "clip-primary-bdrm", "N", 1154.5, 696.8, 1154.5, 858.7, -1, 0, eave_ft=9.8,  overhang_ft=2.0)
-    add_seg("second", "primary-bdrm", "clip-primary-bdrm", "M", 1216.7, 918.0, 1270.7, 918.0, 0, 1,  eave_ft=12.5, overhang_ft=2.0)
-    add_seg("second", "primary-bdrm", "clip-primary-bdrm", "M", 1378.6, 918.0, 1432.6, 918.0, 0, 1,  eave_ft=12.5, overhang_ft=2.0)
+    add_seg("second", "primary-bdrm", "clip-primary-bdrm", "M", 1216.7, 918.0, 1270.7, 918.0, 0, 1,  eave_ft=16.5, overhang_ft=2.0)
+    add_seg("second", "primary-bdrm", "clip-primary-bdrm", "M", 1378.6, 918.0, 1432.6, 918.0, 0, 1,  eave_ft=16.5, overhang_ft=2.0)
 
-    # Primary Closet (West -Y Awning O)
+    # Primary Closet (West -Y Clerestory O — A2.3: FG)
     add_seg("second", "primary-clst", "clip-primary-clst", "O", 1243.7, 529.5, 1405.6, 529.5, 0, -1, eave_ft=9.5, overhang_ft=2.0)
 
     # Bath 3 / Primary Bath (West -Y Windows P & Q, plus Overhead Skylight T!)
@@ -244,6 +257,7 @@ def build_openings():
         "hFt": t_meta["hFt"],
         "sillFt": 9.0,
         "headFt": 9.5,
+        "baseElevFt": FLOOR_BASE_FT["second"],
         "eaveFt": 9.5,
         "overhangFt": 0.0,
         "rect": {"x": 1575.1, "y": 669.0, "w": 33.7, "h": 103.4},
@@ -258,17 +272,18 @@ def build_openings():
     add_seg("second", "bath-2", "clip-bath-2", "R", 1754.3, 529.5, 1844.3, 529.5, 0, -1, eave_ft=9.5, overhang_ft=2.0)
 
     # 2nd Floor Hallway (East +Y Windows K & L)
-    add_seg("second", "hallway-2", "clip-game-hall", "K", 1574.8, 918.0, 1646.8, 918.0, 0, 1, eave_ft=9.5, overhang_ft=2.0)
-    add_seg("second", "hallway-2", "clip-game-hall", "L", 1696.3, 918.0, 1876.3, 918.0, 0, 1, eave_ft=9.5, overhang_ft=2.0)
+    add_seg("second", "hallway-2", "clip-game-hall", "K", 1574.8, 918.0, 1646.8, 918.0, 0, 1, eave_ft=16.5, overhang_ft=2.0)
+    add_seg("second", "hallway-2", "clip-game-hall", "L", 1696.3, 918.0, 1876.3, 918.0, 0, 1, eave_ft=16.5, overhang_ft=2.0)
 
     # Game Room (West -Y Windows S & I, North +X Windows I x 3, East +Y Windows K & J)
+    # Brick-tower I slots (west + northwest) are dimensioned 8'-0" head on A3.0-1 / A3.1-4 (sill 2').
     add_seg("second", "game-room", "clip-game-hall", "S", 1901.7, 529.5, 1955.7, 529.5, 0, -1, eave_ft=9.5,  overhang_ft=2.0)
-    add_seg("second", "game-room", "clip-game-hall", "I", 2145.8, 529.5, 2172.8, 529.5, 0, -1, eave_ft=9.5,  overhang_ft=2.0)
-    add_seg("second", "game-room", "clip-game-hall", "I", 2196.0, 563.9, 2196.0, 590.9, 1, 0,  eave_ft=9.5,  overhang_ft=2.0)
+    add_seg("second", "game-room", "clip-game-hall", "I", 2145.8, 529.5, 2172.8, 529.5, 0, -1, eave_ft=9.5,  overhang_ft=2.0, sill_ft=2.0, head_ft=8.0)
+    add_seg("second", "game-room", "clip-game-hall", "I", 2196.0, 563.9, 2196.0, 590.9, 1, 0,  eave_ft=9.5,  overhang_ft=2.0, sill_ft=2.0, head_ft=8.0)
     add_seg("second", "game-room", "clip-game-hall", "I", 2196.0, 818.6, 2196.0, 845.6, 1, 0,  eave_ft=9.5,  overhang_ft=2.0)
     add_seg("second", "game-room", "clip-game-hall", "I", 2196.0, 852.7, 2196.0, 879.7, 1, 0,  eave_ft=9.5,  overhang_ft=2.0)
-    add_seg("second", "game-room", "clip-game-hall", "K", 1925.7, 918.0, 1997.7, 918.0, 0, 1,  eave_ft=9.5,  overhang_ft=2.0)
-    add_seg("second", "game-room", "clip-game-hall", "J", 2079.8, 918.0, 2133.8, 918.0, 0, 1,  eave_ft=12.2, overhang_ft=2.0)
+    add_seg("second", "game-room", "clip-game-hall", "K", 1925.7, 918.0, 1997.7, 918.0, 0, 1,  eave_ft=16.5,  overhang_ft=2.0)
+    add_seg("second", "game-room", "clip-game-hall", "J", 2079.8, 918.0, 2133.8, 918.0, 0, 1,  eave_ft=16.5, overhang_ft=2.0)
 
     # Assign deterministic <ROOM>-<MARK><NUM> (or <ROOM>-D<DOOR>) IDs sorted top-to-bottom, left-to-right
     grouped = defaultdict(list)
@@ -330,12 +345,23 @@ def build_clip_zones():
 def build_masses_and_trees():
     """3D building footprints (heightFt above grade) & 4 heritage Pecan tree canopies for exterior shadows."""
     masses = [
-        {
-            "id": "main-2story",
-            "label": "2-Story Main Volume",
-            "heightFt": 25.0,
-            "poly": [[1150, 525], [2200, 525], [2200, 922], [1150, 922]],
-        },
+        # 2-story main volume under the 4:12 shed (A3.0 / A3.1): roof surface ~21.7' above 1st Fl. at the
+        # West wall (low eave, T.O.P. 20'-9 3/8") rising to ~28.9' at the East wall (high eave, top ~29'-7").
+        # Modeled as 4 West->East strips at their mid-strip roof heights.
+        *[
+            {
+                "id": f"main-2story-{i + 1}",
+                "label": "2-Story Main Volume",
+                "heightFt": h,
+                "poly": [[1150, y0], [2200, y0], [2200, y1], [1150, y1]],
+            }
+            for i, (y0, y1, h) in enumerate([
+                (525.0, 624.25, 22.6),
+                (624.25, 723.5, 24.5),
+                (723.5, 822.75, 26.3),
+                (822.75, 922.0, 28.1),
+            ])
+        ],
         {
             "id": "main-north-entry",
             "label": "1-Story Office / Entry / Reading Wing",
@@ -345,34 +371,36 @@ def build_masses_and_trees():
         {
             "id": "main-dining",
             "label": "1-Story Curved Dining Bay",
-            "heightFt": 12.2,
+            "heightFt": 11.0,  # A3.0-2 dining-bay roof band ~10.9'
             "poly": [[1377, 918], [1614, 918], [1614, 1074], [1465, 1074], [1405, 1040], [1377, 980]],
         },
         {
             "id": "garage-patio",
             "label": "Garage & Screened Patio",
-            "heightFt": 12.5,
+            "heightFt": 10.5,  # A3.0-2 garage parapet ~9.4' / patio roof ~10.4' (plate 9'-1 1/8")
             "poly": [[737, 525], [1382, 525], [1382, 922], [737, 922]],
         },
         {
             "id": "carport",
             "label": "Covered Carport",
-            "heightFt": 11.0,
+            "heightFt": 10.3,  # A3.1-4 carport roof ~10.2'
             "poly": [[503, 580], [737, 580], [737, 922], [503, 922]],
         },
         {
             "id": "adu",
             "label": "ADU",
-            "heightFt": 13.0,
+            "heightFt": 12.3,  # A3.0-2 2:12 shed ~10.2' (S) to ~14.3' (N) above main 1st Fl.
             "poly": [[171, 373], [503, 373], [503, 928], [414, 928], [414, 964], [171, 964]],
         },
     ]
 
+    # NOTE: Tree heights & canopy bases are ASSUMPTIONS — Sheet A1.0 gives only trunk diameters and
+    # critical root zones. Replace with arborist/survey values when available.
     trees = [
-        {"id": "pecan-1", "label": "24\" Heritage Pecan", "cx": 1519.0, "cy": 305.0, "r": 210.0, "heightFt": 32.0, "canopyBaseFt": 9.0},
-        {"id": "pecan-2", "label": "24\" Heritage Pecan", "cx": 1661.0, "cy": 305.0, "r": 216.0, "heightFt": 33.0, "canopyBaseFt": 9.0},
-        {"id": "pecan-3", "label": "19\" Heritage Pecan", "cx": 2370.0, "cy": 305.0, "r": 175.0, "heightFt": 27.0, "canopyBaseFt": 8.5},
-        {"id": "pecan-4", "label": "22\" Heritage Pecan", "cx": 2407.0, "cy": 470.0, "r": 195.0, "heightFt": 30.0, "canopyBaseFt": 8.5},
+        {"id": "pecan-1", "label": "24\" Heritage Pecan", "cx": 1519.0, "cy": 305.0, "r": 210.0, "heightFt": 32.0, "canopyBaseFt": 9.0, "assumed": True},
+        {"id": "pecan-2", "label": "24\" Heritage Pecan", "cx": 1661.0, "cy": 305.0, "r": 216.0, "heightFt": 33.0, "canopyBaseFt": 9.0, "assumed": True},
+        {"id": "pecan-3", "label": "19\" Heritage Pecan", "cx": 2370.0, "cy": 305.0, "r": 175.0, "heightFt": 27.0, "canopyBaseFt": 8.5, "assumed": True},
+        {"id": "pecan-4", "label": "22\" Heritage Pecan", "cx": 2407.0, "cy": 470.0, "r": 195.0, "heightFt": 30.0, "canopyBaseFt": 8.5, "assumed": True},
     ]
     return masses, trees
 

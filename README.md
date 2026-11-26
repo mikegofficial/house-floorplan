@@ -44,6 +44,7 @@ npx serve .
 
 - **True-North Solar Physics:** Calibrated directly to Sheet `A1.0` survey bearings (`True North = +10°` clockwise from right: Courtyard = East `080°`, Entry = North `350°`, ADU end = South `170°`, Heritage Pecan side = West `260°`) and Sheet `A2.3` window sill/head schedules.
 - **3D Architectural & Seasonal Shading:** Models `2'-0"` roof overhangs, covered Screened Patio/Carport roofs, courtyard wing self-shading, diffused translucent Glass Block (`U` / `V`), Bath 3 overhead Skylight (`B3-T1`), exterior 2-story Pool/Courtyard shadows, and toggleable deciduous Pecan tree canopy filtering (leafy summer dappled shade vs. bare winter branches).
+- **Elevation-Calibrated Heights:** Eaves, sills/heads, and massing heights are measured from Sheets `A3.0`/`A3.1` — the main 4:12 shed rises from ~21.7' (West wall) to ~28.9' (East wall) and is modeled as four height strips; East 2nd-floor windows sit under the high (~16.5' above 2nd Fl.) eave; ADU openings use the `-1'-6"` ADU floor. Pecan tree heights/canopy bases are **assumptions** (A1.0 only gives trunk diameters and root zones).
 - **Aligned Vector Windows & Glazing (`<ROOM>-<MARK><NUM>`):** Toggle `Windows` (`W`) to highlight all 45 scheduled windows, glazed doors, and skylights (`DIN-D1`..`DIN-D4`, `LIV-D108`, `PRM-N1`, `B3-T1`, etc.), filter by glazing category, search/jump by ID, hover for live solar reach, or inspect direct-sun hours and click **Preview Peak Sun** inside any Room Card.
 
 ## Interactive Electrical Overlay & Device ID System

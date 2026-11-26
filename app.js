@@ -1515,7 +1515,7 @@
       return { lit: false, reason: `Shaded — sun is behind ${op.facingLabel.split(" ")[0]} facade` };
     }
 
-    const baseElevFt = op.floor === "second" ? 11.7 : 0.0;
+    const baseElevFt = typeof op.baseElevFt === "number" ? op.baseElevFt : (op.floor === "second" ? 11.7 : 0.0);
     let effSillFt = op.sillFt;
     let effHeadFt = op.headFt;
 
@@ -2512,21 +2512,22 @@
     if (room.id === "pool") {
       totalEl.textContent = "Outdoor Courtyard";
       let firstSun = null, lastSun = null, bestMin = 660, bestScore = -1;
-      const main2S = (ws.masses || []).find((m) => m.id === "main-2story");
+      const main2S = (ws.masses || []).filter((m) => m.id.startsWith("main-2story"));
       for (let m = dayRef.sunriseMin + 10; m <= dayRef.sunsetMin - 10; m += 10) {
         const s = computeSolarPosition(state.sunDate, m);
         if (s.altDeg <= 3) continue;
-        // Check Pool center (1785, 1085) against 2-story mass (height 25 ft)
+        // Check Pool center (1785, 1085) against the sloped 4:12 2-story volume (modeled as W→E height strips)
         let blocked = false;
-        if (main2S) {
-          for (let i = 0; i < main2S.poly.length; i++) {
-            const a = main2S.poly[i], b = main2S.poly[(i + 1) % main2S.poly.length];
+        for (const mass of main2S) {
+          for (let i = 0; i < mass.poly.length; i++) {
+            const a = mass.poly[i], b = mass.poly[(i + 1) % mass.poly.length];
             const t = raySegmentHit(1785, 1085, s.towardSunX, s.towardSunY, a[0], a[1], b[0], b[1]);
-            if (t !== null && (t / UNITS_PER_FOOT) * Math.tan(s.altRad) < main2S.heightFt) {
+            if (t !== null && (t / UNITS_PER_FOOT) * Math.tan(s.altRad) < mass.heightFt) {
               blocked = true;
               break;
             }
           }
+          if (blocked) break;
         }
         if (!blocked) {
           if (firstSun === null) firstSun = m;
