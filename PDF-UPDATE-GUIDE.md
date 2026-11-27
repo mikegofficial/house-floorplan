@@ -200,7 +200,7 @@ Check if the revised PDF modified any of the following metadata in `app.js` / `i
 4. **Exterior Elevations (Sibling repo `house-exterior`, Sheets A3.0 & A3.1):**
    - Extract the 4 elevation viewports (North, East, South, West) from Pages A3.0 and A3.1 via `pdftocairo -svg`.
    - Normalize each elevation's vertical origin so **`y = 0` = First Floor `0'-0"`** (all 4 roof peaks should align at the exact same negative `y`, e.g., `y = -533.2` for `+29'-7½"`).
-   - Strip title blocks, embedded `<image>` elements, and any identifying callouts, regenerate `layers/*.svg` and `layers/elev-data.js`, and push to `mikegofficial/house-exterior`.
+   - Strip title blocks, embedded `<image>` elements, and any identifying callouts via `scripts/extract_exterior.py`, regenerate `layers/*.svg` and `layers/exterior-data.js`, bump `?v=<N>` in `index.html`, and push to `mikegofficial/house-exterior`.
 
 ---
 

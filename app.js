@@ -189,7 +189,7 @@
       name: "Pool & East Courtyard", ceiling: "Outdoor",
       rect: { x: 1640, y: 970, w: 300, h: 330 },
       desc: "Arched-end east courtyard pool framed directly between the Dining Nook, Living Room, and Powder Room, capturing direct morning and midday sun.",
-      tags: ["Courtyard Pool", "Pool Equip Pad (24 SF)", "Garden Wall (50 SF)", "Landscape Lighting"]
+      tags: ["Courtyard Pool", "Pool Coping (21 SF)", "Pool Equip Pad (15 SF)", "Garden Wall (49 SF)", "Landscape Lighting"]
     },
     {
       id: "pecans", floor: "site", group: "Site & Outdoor (7,805 SF Lot)",

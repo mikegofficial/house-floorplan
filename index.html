@@ -6,7 +6,7 @@
   <title>Interactive Vector Floorplan</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d4e89'/%3E%3Cpath d='M7 22V12l9-5 9 5v10H7zm4-3h10v-5.5L16 10.6 11 13.5V19z' fill='%23fff'/%3E%3C/svg%3E" />
   <meta name="description" content="Interactive pure-vector architectural floorplan viewer with First Floor, Second Floor, ADU, Site Plan, Roof Plan, Electrical Overlays, calibrated real-world measurement tools, and door/window schedules." />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
   <div class="app-shell">
@@ -374,7 +374,7 @@
           <section id="panel-project" class="sidebar-panel">
             <div class="stat-grid">
               <div class="stat-card">
-                <div class="stat-value">4,005 SF</div>
+                <div class="stat-value">4,004 SF</div>
                 <div class="stat-label">Total FAR (Max 4,293)</div>
               </div>
               <div class="stat-card">
@@ -382,7 +382,7 @@
                 <div class="stat-label">Site Lot Area</div>
               </div>
               <div class="stat-card">
-                <div class="stat-value">3,512 SF</div>
+                <div class="stat-value">3,511 SF</div>
                 <div class="stat-label">Impervious Cover (45%)</div>
               </div>
               <div class="stat-card">
@@ -398,19 +398,20 @@
               <div class="kv-row"><span class="kv-key">Second Floor</span><span class="kv-val">1,294 SF</span></div>
               <div class="kv-row"><span class="kv-key">ADU</span><span class="kv-val">607 SF</span></div>
               <div class="kv-row"><span class="kv-key">2-Car Garage</span><span class="kv-val">523 SF</span></div>
-              <div class="kv-row"><span class="kv-key"><strong>Total FAR</strong></span><span class="kv-val"><strong>4,005 SF</strong></span></div>
+              <div class="kv-row"><span class="kv-key"><strong>Total FAR</strong></span><span class="kv-val"><strong>4,004 SF</strong></span></div>
             </div>
 
             <div class="section-label">Impervious Cover (45.0% / 45% Max)</div>
-            <div class="progress-bar"><div class="progress-fill" style="width: 99.99%;"></div></div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 99.96%;"></div></div>
             <div class="kv-list">
               <div class="kv-row"><span class="kv-key">First Floor + ADU</span><span class="kv-val">2,188 SF</span></div>
-              <div class="kv-row"><span class="kv-key">Driveway / Carport</span><span class="kv-val">552 SF</span></div>
+              <div class="kv-row"><span class="kv-key">Driveway / Carport</span><span class="kv-val">540 SF</span></div>
               <div class="kv-row"><span class="kv-key">2-Car Garage</span><span class="kv-val">523 SF</span></div>
               <div class="kv-row"><span class="kv-key">Screened Patio</span><span class="kv-val">154 SF</span></div>
-              <div class="kv-row"><span class="kv-key">Garden Wall</span><span class="kv-val">50 SF</span></div>
-              <div class="kv-row"><span class="kv-key">Pool Equip + AC Pads</span><span class="kv-val">47 SF</span></div>
-              <div class="kv-row"><span class="kv-key"><strong>Total IC</strong></span><span class="kv-val"><strong>3,512 SF</strong></span></div>
+              <div class="kv-row"><span class="kv-key">Garden Wall</span><span class="kv-val">49 SF</span></div>
+              <div class="kv-row"><span class="kv-key">Pool Coping</span><span class="kv-val">21 SF</span></div>
+              <div class="kv-row"><span class="kv-key">Pool Equip + AC Pads</span><span class="kv-val">37 SF</span></div>
+              <div class="kv-row"><span class="kv-key"><strong>Total IC</strong></span><span class="kv-val"><strong>3,511 SF</strong></span></div>
             </div>
 
             <div class="section-label">Building Summary</div>
@@ -661,9 +662,9 @@
   </div>
 
   <!-- Pure Vector Layer Data Bundle (works over file:// and http:// with zero CORS issues) -->
-  <script src="layers/plan-data.js?v=5"></script>
-  <script src="layers/elec-inventory.js?v=5"></script>
-  <script src="layers/windows-data.js?v=5"></script>
-  <script src="app.js?v=5"></script>
+  <script src="layers/plan-data.js?v=6"></script>
+  <script src="layers/elec-inventory.js?v=6"></script>
+  <script src="layers/windows-data.js?v=6"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
